@@ -1,0 +1,29 @@
+/* SCROLL STORYBOARD: water highlights travel within the paper ribbon. Seven
+   staggered foam layers surge, form and drift at different depths throughout
+   scrolling in either direction. All movement stops when scrolling stops. */
+.waterfall-scene{position:relative;isolation:isolate;overflow:hidden;height:640px;background-color:#e9eadb;background-image:var(--paper-grain);pointer-events:none;user-select:none}
+.waterfall-scene:before,.waterfall-scene:after{content:'';position:absolute;left:0;right:0;height:22px;background:var(--cream);z-index:6;clip-path:polygon(0 0,100% 0,100% 52%,88% 63%,74% 40%,58% 62%,42% 45%,27% 65%,12% 41%,0 60%)}
+.waterfall-scene:before{top:-1px}.waterfall-scene:after{bottom:-1px;rotate:180deg}
+.waterfall-stage{position:relative;width:min(1240px,100%);height:100%;margin-inline:auto}
+.waterfall-hills{position:absolute;inset:45px -20% 10px;transform:translate3d(0,var(--depth-y,0px),0);background-color:#a7b296;background-image:var(--paper-grain);clip-path:polygon(0 61%,8% 51%,18% 61%,29% 23%,36% 43%,45% 35%,53% 14%,65% 47%,74% 27%,83% 53%,93% 40%,100% 59%,100% 100%,0 100%)}
+.waterfall-hills-near{inset:135px -15% -70px;background-color:#728668;clip-path:polygon(0 62%,10% 49%,22% 60%,33% 37%,44% 56%,54% 34%,63% 58%,77% 39%,88% 66%,100% 51%,100% 100%,0 100%)}
+.waterfall-model{position:absolute;width:960px;left:50%;bottom:-10px;translate:-50% 0;transform:translate3d(0,var(--depth-y,0px),0);filter:drop-shadow(1px 12px 7px #243d3225)}
+.waterfall-model img{display:block;width:100%;height:auto}
+.waterfall-flow{position:absolute;inset:0;width:100%;height:100%;z-index:1;overflow:hidden;pointer-events:none}
+.water-paper-strips{transform:translate3d(0,var(--water-flow,0px),0);fill:#fffaf0;opacity:.55}
+.waterfall-foam{position:absolute;z-index:2;transform-origin:25% 88%;opacity:var(--foam-alpha,1);transform:translate3d(calc(var(--foam-x,0px) * var(--foam-drift,1)),var(--foam-y,0px),0) scale(var(--foam-scale,1));filter:drop-shadow(0 2px 1px #416b6e20)}
+.foam-impact-back{--foam-drift:.12;left:49%;bottom:21%;width:23%;z-index:2}
+.foam-impact{--foam-drift:.2;left:51%;bottom:20%;width:25%;z-index:5}
+.foam-impact-front{--foam-drift:.3;left:54%;bottom:17.5%;width:20%;z-index:6}
+.foam-middle-back{--foam-drift:.55;left:61%;bottom:19%;width:23%;z-index:3}
+.foam-middle{--foam-drift:.7;left:64%;bottom:16%;width:23%;z-index:4}
+.foam-downstream{--foam-drift:.85;left:74%;bottom:14.5%;width:18%;z-index:3}
+.foam-pool-front{--foam-drift:1;left:62%;bottom:11%;width:22%;z-index:7}
+.waterfall-bush{position:absolute;bottom:-35px;width:490px;z-index:4;transform:translate3d(0,var(--depth-y,0px),0)}
+.waterfall-bush img{width:100%;filter:drop-shadow(2px 6px 3px #243d3230)}
+.waterfall-bush-left{left:-220px}.waterfall-bush-right{right:-210px}.waterfall-bush-right img{scale:-1 1}
+.waterfall-paper{position:absolute;z-index:5;right:36px;top:54px;margin:0;background-color:var(--paper);background-image:var(--paper-grain);padding:14px 22px 16px;font-family:Marker,cursive;font-size:20px;line-height:1.4;rotate:4deg;clip-path:var(--rough);filter:drop-shadow(3px 4px 2px #243d3225)}
+@media(max-width:850px){.waterfall-scene{height:570px}.waterfall-model{width:840px}.waterfall-paper{top:36px;right:25px;font-size:17px}.waterfall-bush{width:390px}.waterfall-bush-left{left:-200px}.waterfall-bush-right{right:-185px}}
+@media(max-width:639px){.waterfall-scene{height:370px}.waterfall-model{width:calc(100% + 80px);max-width:530px;bottom:5px}.waterfall-paper{right:20px;top:26px;font-size:14px;padding:10px 15px 12px}.waterfall-hills{inset:25px -50% 10px}.waterfall-hills-near{inset:115px -40% -60px}.waterfall-bush{width:240px;bottom:-15px}.waterfall-bush-left{left:-170px}.waterfall-bush-right{right:-170px}}
+@media(max-width:359px){.waterfall-scene{height:330px}.waterfall-paper{right:16px;top:24px;font-size:13px}}
+@media(prefers-reduced-motion:reduce){.waterfall-hills,.waterfall-model,.waterfall-foam,.waterfall-bush,.water-paper-strips{transform:none!important}.waterfall-foam{opacity:1!important}}

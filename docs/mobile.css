@@ -1,0 +1,257 @@
+/* Keep the handmade materials while giving small screens room to read and tap. */
+@media (pointer: coarse) {
+  .site-header nav a,
+  .text-link,
+  .site-footer nav a {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .button { min-height: 48px; }
+}
+
+@media (max-width: 850px) {
+  .site-header nav a { display: inline-flex; align-items: center; min-height: 44px; }
+
+  .world,
+  .pilot,
+  .connection-grid { gap: 36px; }
+
+}
+
+/* A narrow tablet needs the same clear paper-and-courtyard composition as a phone. */
+@media (min-width: 640px) and (max-width: 759px) {
+  .hero { min-height: 0; }
+
+  .hero-inner {
+    grid-template-columns: 1fr;
+    min-height: 0;
+  }
+
+  .hero-paper {
+    width: min(560px, 100%);
+    justify-self: center;
+    margin-block: 32px 0;
+    padding: 34px 36px 28px;
+  }
+
+  .hero-paper .eyebrow { max-width: none; }
+  .hero h1 { font-size: 58px; }
+  .hero-premise { max-width: none; }
+
+  .hero-actions {
+    flex-direction: row;
+    align-items: center;
+    gap: 18px;
+  }
+
+  .hero-cast {
+    --cast-ground: 32px;
+    height: 394px;
+    width: min(460px, 100%);
+    justify-self: center;
+    margin-top: 18px;
+  }
+
+  .hero-figure { translate: none; }
+  .hero-figure-mukunda { height: 316px; width: 50%; left: 2%; }
+  .hero-figure-maya { height: 336px; width: 46%; right: 2%; }
+  .hero-figure-pintu { height: 146px; width: 51%; right: 23%; }
+  .cast-caption { top: 0; right: 6px; }
+  .hero-scroll { padding-bottom: 30px; }
+}
+
+@media (max-width: 759px) {
+  .hero-forest { background-position: 65% center; }
+
+
+}
+
+@media (max-width: 639px) {
+  html { scroll-padding-top: 24px; }
+  .wrap { width: calc(100% - 40px); }
+  .section { padding-block: 60px; }
+
+  .site-header {
+    padding: 16px 20px 18px;
+    gap: 16px;
+  }
+
+  .site-header nav {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    width: 100%;
+    gap: 8px;
+    padding-top: 14px;
+  }
+
+  .site-header nav a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 8px 4px;
+    font-size: clamp(10.5px, 2.8vw, 12px);
+    text-align: center;
+  }
+
+  .hero-paper { padding: 28px 25px 24px; }
+  .hero-paper .eyebrow { font-size: 9px; line-height: 1.8; }
+  .hero-premise { font-size: 15px; line-height: 1.7; }
+  .hero-actions { gap: 12px 18px; }
+
+  .hero-actions .button {
+    min-height: 48px;
+    padding: 14px 17px 10px;
+    font-size: 12px;
+  }
+
+  .hero-actions .text-link {
+    min-height: 44px;
+    font-size: 12px;
+  }
+
+  .hero-cast {
+    --cast-ground: 32px;
+    height: 384px;
+    margin-top: 18px;
+  }
+
+  .hero-figure { translate: none; }
+  .paper-foot { font-size: 10px; }
+  .hero-scroll { min-height: 52px; font-size: 11px; }
+
+  .section-copy p:not(.eyebrow):not(.lead):not(.spiral-status):not(.demo-note),
+  .connection .section-copy p:not(.eyebrow):not(.lead):not(.spiral-status):not(.demo-note),
+  .about-row p,
+  .about-end p { font-size: 16px; line-height: 1.75; }
+
+  .section-heading > p,
+  .cast-intro,
+  .values-heading > p:last-child,
+  .values-grid p { font-size: 15px; line-height: 1.75; }
+
+  .cast-copy { padding: 24px 20px; }
+  .cast-copy > p:not(.character-role) { font-size: 15px; line-height: 1.75; }
+  .character-role { font-size: 9px; min-height: 0; line-height: 1.6; }
+  .cast-button { min-height: 44px; font-size: 13px; margin-top: 18px; }
+  .cast-grid { gap: 34px; }
+
+  .spiral-status { font-size: 13px; }
+  .demo-note { font-size: 12px; }
+  .spiral-caption { font-size: 9px; }
+  .connection .button,
+  .pilot .button { min-height: 48px; font-size: 13px; }
+  .development-label { font-size: 10px; }
+  .photo-label { font-size: 9px; }
+
+  .site-footer {
+    padding-bottom: max(36px, env(safe-area-inset-bottom));
+  }
+
+  .site-footer p { font-size: 14px; }
+  .site-footer p small { font-size: 11px; }
+
+  .site-footer nav {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px 24px;
+    width: 100%;
+    font-size: 13px;
+  }
+
+  .site-footer nav a {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+  }
+
+  .about-visual p { font-size: 10px; }
+
+  dialog {
+    width: calc(100% - 24px);
+    max-height: calc(100dvh - 32px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+    padding: 20px 22px 28px;
+    overscroll-behavior: contain;
+  }
+
+  .dialog-top {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    padding-block: 12px;
+    margin-top: -12px;
+    background-color: var(--paper);
+    background-image: var(--paper-grain);
+  }
+
+  .dialog-top .eyebrow { font-size: 9px; }
+  #close-dialog { width: 48px; height: 48px; }
+  #dialog-body { font-size: 16px; line-height: 1.75; }
+  #dialog-body .dialog-eyebrow { font-size: 11px; }
+  #dialog-body .story-note { font-size: 12px; }
+}
+
+@media (min-width: 480px) and (max-width: 639px) {
+  .cast-card,
+  .cast-card:last-child { grid-template-columns: 38% 62%; }
+
+  .cast-portrait { min-height: 300px; }
+}
+
+@media (max-width: 479px) {
+  .hero-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+  }
+
+  .hero-actions .text-link {
+    align-self: center;
+    justify-content: center;
+  }
+
+  .hero h1 { font-size: clamp(40px, 10.4vw, 50px); }
+
+  .cast-card,
+  .cast-card:last-child { grid-template-columns: 1fr; }
+
+  .cast-portrait {
+    width: calc(100% - 24px);
+    height: 260px;
+    min-height: 0;
+    margin: 12px 12px 0;
+    padding: 24px 28px 0;
+  }
+
+  .cast-portrait:before { top: 14%; height: 78%; }
+  .pintu-portrait { padding: 36px 30px 22px; }
+  .cast-card:before { left: 43%; }
+  .cast-copy { padding: 22px 24px 24px; }
+  .cast-copy h3 { font-size: 32px; }
+  .cast-copy > p:not(.character-role) { font-size: 16px; }
+  .character-role { font-size: 10px; }
+
+  .journal-page {
+    width: 48%;
+    min-height: 180px;
+    padding: 15px;
+    right: -5px;
+  }
+
+  .about-end .hero-actions { gap: 6px; }
+}
+
+@media (max-width: 359px) {
+  .wrap { width: calc(100% - 32px); }
+  .site-header { padding-inline: 16px; }
+  .hero-paper { padding-inline: 22px; }
+  .hero-cast { height: 334px; }
+  .hero-figure-mukunda { height: 248px; }
+  .hero-figure-maya { height: 264px; }
+  .hero-figure-pintu { height: 113px; }
+  .cast-copy { padding-inline: 22px; }
+  .journal-page { min-height: 165px; }
+  .journal-page > span:not(.journal-page-number) { font-size: 15px; }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "my-village-shikha",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "The cardboard world of My Village Shikha, ready for GitHub Pages.",
+  "scripts": {
+    "dev": "node server.mjs",
+    "start": "node server.mjs",
+    "check": "node scripts/check-site.mjs"
+  }
+}

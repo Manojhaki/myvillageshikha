@@ -1,0 +1,26 @@
+/* A cardboard theatre: scenery drifts while visitors peek behind its cover. */
+.hero-forest{inset:-50px 0;transform:translate3d(0,var(--background-y,0px),0)}
+.hero-ground{position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(0deg,#142c2540,transparent 40%),linear-gradient(90deg,#253a2b1a,transparent 55%),url('./assets/magar-village-cohesive.png') center/cover no-repeat;mask-image:linear-gradient(to bottom,transparent 70%,#000 84%)}
+.hero-inner{z-index:3}
+.hero-bush{position:absolute;z-index:5;pointer-events:none;user-select:none;bottom:-40px;width:380px;transform:translate3d(0,var(--depth-y,0px),0)}
+.hero-bush img{width:100%;height:auto;filter:drop-shadow(0 5px 3px #203d3230)}
+.hero-bush-left{left:-190px}.hero-bush-right{right:-205px;width:420px}.hero-bush-right img{scale:-1 1}
+.woodland-scene{--reveal:1;position:relative;isolation:isolate;height:320px;overflow:hidden;pointer-events:none;user-select:none;background:var(--cream)}
+.scenery-props{position:relative;width:min(1240px,100%);height:100%;margin-inline:auto;transform:translate3d(0,var(--scene-shift,0px),0)}
+.scenery-floor{position:absolute;left:-15vw;right:-15vw;bottom:-30px;height:138px;background-color:#e5cea8;background-image:var(--paper-grain);clip-path:polygon(0 21%,11% 15%,23% 20%,35% 13%,49% 17%,62% 12%,76% 19%,89% 14%,100% 19%,100% 100%,0 100%);transform:translate3d(0,var(--depth-y,0px),0)}
+.bush-layer{position:absolute;width:370px;bottom:50px;transform:translate3d(0,var(--depth-y,0px),0)}
+.bush-layer img{display:block;width:100%;height:auto;filter:drop-shadow(1px 4px 2px #243d3226)}
+.bush-back-left{left:calc(50% - 450px);z-index:1;opacity:.9}.bush-back-right{left:calc(50% + 72px);z-index:1;opacity:.9}.bush-back-right img{scale:-1 1}
+.bush-front-left{left:calc(50% - 520px);bottom:13px;width:430px;z-index:5}.bush-front-right{left:calc(50% + 85px);bottom:3px;width:450px;z-index:5}.bush-front-left img{scale:-1 1}
+.peek-window{position:absolute;left:50%;bottom:73px;width:210px;height:244px;overflow:hidden;z-index:3;transform:translateX(-50%)}
+.peek-animal{position:absolute;bottom:0;left:50%;width:160px;height:auto;max-width:none;translate:-50% 0;transform:translate3d(0,calc((1 - var(--reveal,1)) * 110%),0);opacity:clamp(0,calc(var(--reveal,1) * 4),1);filter:drop-shadow(2px 3px 1px #48342020)}
+.burrow-shadow{position:absolute;left:50%;bottom:64px;width:216px;height:43px;border-radius:50%;background:#2c2118;box-shadow:inset 0 7px 12px #120e09;z-index:2;transform:translateX(-50%) rotate(-1deg)}
+.burrow-rim{position:absolute;left:50%;bottom:36px;width:250px;height:80px;overflow:hidden;z-index:4;transform:translateX(-50%)}
+.burrow-rim img{position:absolute;bottom:0;left:-308px;width:864px;height:auto;max-width:none}
+.bush-cover{left:calc(50% - 140px);width:280px;bottom:9px;z-index:5}
+.woodland-scene-owl{height:265px}.woodland-scene-owl .scenery-floor{background-color:#e9e6d1;height:110px}.woodland-scene-owl .peek-window{width:285px;height:185px;bottom:57px}.woodland-scene-owl .peek-animal{width:244px}.woodland-scene-owl .bush-cover{bottom:1px;width:270px;left:calc(50% - 135px)}
+.woodland-scene-fox{background:var(--forest);height:325px}.woodland-scene-fox .scenery-floor{background-color:var(--cream);height:123px}.woodland-scene-fox .peek-window{width:220px;height:275px;bottom:51px}.woodland-scene-fox .peek-animal{width:160px}.woodland-scene-fox .bush-cover{bottom:2px;width:310px;left:calc(50% - 155px)}
+.scenery-ready .hero-forest,.scenery-ready .hero-bush,.scenery-ready .peek-animal,.scenery-ready .bush-layer{will-change:transform}
+@media(max-width:850px){.hero-bush{width:290px;left:-180px;bottom:-28px}.hero-bush-right{left:auto;right:-190px;width:330px}.bush-back-left{left:calc(50% - 370px);width:310px}.bush-back-right{left:calc(50% + 60px);width:310px}.bush-front-left{left:calc(50% - 420px);width:350px}.bush-front-right{left:calc(50% + 70px);width:350px}}
+@media(max-width:639px){.hero-forest{inset:-26px 0}.hero-ground{background-position:65% center}.hero-bush{left:-145px;bottom:-24px;width:260px}.hero-bush-right{left:auto;right:-165px;width:280px}.woodland-scene{height:265px}.peek-window{width:175px;height:209px;bottom:58px}.peek-animal{width:133px}.burrow-shadow{bottom:57px;width:179px;height:35px}.burrow-rim{bottom:29px;transform:translateX(-50%) scale(.83);transform-origin:50% 100%}.scenery-floor{height:120px}.bush-back-left{left:calc(50% - 285px);width:245px;bottom:37px}.bush-back-right{left:calc(50% + 40px);width:245px;bottom:34px}.bush-front-left{left:calc(50% - 320px);width:275px;bottom:5px}.bush-front-right{left:calc(50% + 45px);width:275px;bottom:0}.woodland-scene-owl{height:230px}.woodland-scene-owl .peek-window{width:220px;height:153px;bottom:49px}.woodland-scene-owl .peek-animal{width:194px}.woodland-scene-owl .bush-cover{width:214px;left:calc(50% - 107px);bottom:3px}.woodland-scene-fox{height:273px}.woodland-scene-fox .peek-window{width:175px;height:229px;bottom:47px}.woodland-scene-fox .peek-animal{width:137px}.woodland-scene-fox .bush-cover{width:255px;left:calc(50% - 127px);bottom:0}}
+@media(prefers-reduced-motion:reduce){.hero-forest,.hero-bush,.scenery-props,.bush-layer{transform:none!important;will-change:auto!important}.peek-animal{transform:none!important;opacity:1!important;will-change:auto!important}.burrow-rim{transform:translateX(-50%)}}

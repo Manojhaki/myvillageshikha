@@ -1,0 +1,41 @@
+/* RESPONSE STORYBOARD
+   Pointer or keyboard input leaves a hand-drawn line on the paper.
+   Releasing a stroke: green connection, or red incomplete connection.
+   Success: a single short shower of paper leaves; the green glow remains. */
+.spiral-paper{--drawing-ink:#763c37;--drawing-glow:transparent;isolation:isolate}
+.spiral-paper:before{pointer-events:none;z-index:0;box-shadow:inset 0 0 34px var(--drawing-glow);border-color:#826d4538}
+.spiral-paper:after{z-index:0}
+#spiral-drawing{display:block;position:relative;z-index:2;width:100%;max-width:360px;height:auto;aspect-ratio:1;overflow:visible;touch-action:none;user-select:none;cursor:crosshair;-webkit-tap-highlight-color:transparent;border-radius:8px}
+#spiral-drawing:focus{outline:none}
+.spiral-paper:has(#spiral-drawing:focus-visible):before{border:2px dashed var(--drawing-ink)}
+.spiral-guide{fill:none;stroke:#826d45;stroke-width:3;stroke-linecap:round;stroke-dasharray:2 8;opacity:.33;pointer-events:none}
+.spiral-start{fill:#826d45;opacity:.45;pointer-events:none}
+#spiral-ink{fill:none;stroke:var(--drawing-ink);stroke-width:7;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 7px var(--drawing-glow));pointer-events:none}
+#spiral-cursor{fill:var(--paper);stroke:var(--drawing-ink);stroke-width:2;pointer-events:none}
+#spiral-cursor[visibility=hidden]{display:none}
+.spiral-paper[data-state=drawing] .spiral-guide,.spiral-paper[data-state=success] .spiral-guide,.spiral-paper[data-state=incomplete] .spiral-guide{opacity:.17}
+.spiral-paper[data-state=drawing] .spiral-start,.spiral-paper[data-state=success] .spiral-start,.spiral-paper[data-state=incomplete] .spiral-start{opacity:0}
+.spiral-paper[data-state=success]{--drawing-ink:#24763d;--drawing-glow:#75d7739e}
+.spiral-paper[data-state=incomplete]{--drawing-ink:#a03a35;--drawing-glow:#e779658c}
+.spiral-paper[data-state=success]:before,.spiral-paper[data-state=incomplete]:before{border-color:var(--drawing-glow)}
+.spiral-paper[data-state=success] #spiral-ink{filter:drop-shadow(0 0 5px #94e67a) drop-shadow(0 0 10px #68be6870)}
+.spiral-paper[data-state=incomplete] #spiral-ink{filter:drop-shadow(0 0 5px #e78675) drop-shadow(0 0 10px #e7696870)}
+.spiral-paper .spiral-label,.spiral-paper .spiral-caption{pointer-events:none;z-index:3}
+.spiral-paper .spiral-caption{letter-spacing:.65px;bottom:23px;font-size:9px;max-width:94%}
+.spiral-leaves{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:4}
+.forest-leaf{position:absolute;left:var(--leaf-x);top:-48px;width:24px;height:34px;filter:drop-shadow(1px 2px 1px #23462a40);opacity:0;animation:forest-leaf-fall var(--leaf-duration) linear var(--leaf-delay) both}
+@keyframes forest-leaf-fall{0%{opacity:0;transform:translate3d(0,-30px,0) rotate(-15deg)}12%{opacity:1}80%{opacity:1}100%{opacity:0;transform:translate3d(var(--leaf-sway),560px,0) rotate(var(--leaf-turn))}}
+.spiral-leaves.is-static .forest-leaf{top:var(--leaf-static-y);opacity:1;animation:none;transform:rotate(var(--leaf-turn))}
+.connection .spiral-status{min-height:64px;font-size:15px;color:var(--mustard);margin-block:24px;border-left-width:3px}
+.connection:has(.spiral-paper[data-state=success]) .spiral-status{color:#bdeb9e;border-color:#9ade84}
+.connection:has(.spiral-paper[data-state=incomplete]) .spiral-status{color:#ffc1ad;border-color:#ed9683}
+.connection .spiral-story-note{font-size:15px!important;line-height:1.7;color:#bac9b5!important}
+#spiral-reset{min-height:48px}
+#spiral-keyboard-help{margin-top:18px;max-width:450px;color:#d2daca;font-size:13px;line-height:1.7}
+#spiral-keyboard-help summary{cursor:pointer;min-height:44px;display:list-item;list-style-position:inside;padding-block:10px;text-decoration:underline;text-underline-offset:4px}
+#spiral-keyboard-help summary:focus-visible{outline:3px dashed var(--mustard);outline-offset:4px}
+.connection #spiral-keyboard-help p{font-size:13px!important;margin-top:6px;line-height:1.7}
+.spiral-no-script{font-size:14px!important;margin-top:15px!important}
+@media(max-width:850px){.connection-grid{gap:45px}.connection .spiral-status{font-size:14px}}
+@media(max-width:639px){.connection-grid{gap:42px}.spiral-paper .spiral-caption{bottom:21px;font-size:8px}.connection .spiral-status{font-size:15px;min-height:74px;line-height:1.65}.connection .spiral-story-note{font-size:15px!important}.forest-leaf{width:19px;height:27px}#spiral-drawing{width:100%}}
+@media(prefers-reduced-motion:reduce){.forest-leaf{animation:none!important}.spiral-leaves.is-static .forest-leaf{opacity:1}}

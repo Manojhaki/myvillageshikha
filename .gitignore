@@ -1,0 +1,8 @@
+node_modules/
+.claude/
+.env
+.env.*
+*.log
+*.tar.gz
+.DS_Store
+Thumbs.db
