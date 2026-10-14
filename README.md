@@ -43,8 +43,12 @@ Run the link and JavaScript checks before pushing changes:
 npm run check
 ```
 
-The checker follows the main and About pages, their stylesheets, images and module imports. It verifies local links and anchors at both `/` and `/myvillageshikha/`, then checks the syntax of the active JavaScript files. Preview the result on desktop and mobile when changing layouts or interactions.
+The checker follows the main and About pages, their stylesheets, images and module imports. It verifies local links and anchors at both `/` and `/myvillageshikha/`, rejects unused files in `docs/assets/`, then checks the syntax of the active JavaScript files. Preview the result on desktop and mobile when changing layouts or interactions.
 
-## Export notes
+## Website assets
 
-This copy contains the full published website and all 72 original asset files. Local HTML and CSS links use relative paths so the site works both at a domain root and under the GitHub repository path. Character artwork and active JavaScript were preserved during export.
+The site includes only the 16 assets used by My Village Shikha: five cast portraits, the village and forest backgrounds, bushes, a side-view waterfall and foam, three decorative woodland animals, a Nepal map, an original cardboard burrow rim, and the Permanent Marker heading font. Unused reference-site artwork, captured SVGs, compiled styles and superseded character/scenery versions have been removed.
+
+The heading font's attribution and license are included in [docs/licenses/](docs/licenses/README.md).
+
+Local HTML and CSS links use relative paths so the site works both at a domain root and under the GitHub repository path.

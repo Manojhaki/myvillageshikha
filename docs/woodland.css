@@ -16,7 +16,7 @@
 .peek-animal{position:absolute;bottom:0;left:50%;width:160px;height:auto;max-width:none;translate:-50% 0;transform:translate3d(0,calc((1 - var(--reveal,1)) * 110%),0);opacity:clamp(0,calc(var(--reveal,1) * 4),1);filter:drop-shadow(2px 3px 1px #48342020)}
 .burrow-shadow{position:absolute;left:50%;bottom:64px;width:216px;height:43px;border-radius:50%;background:#2c2118;box-shadow:inset 0 7px 12px #120e09;z-index:2;transform:translateX(-50%) rotate(-1deg)}
 .burrow-rim{position:absolute;left:50%;bottom:36px;width:250px;height:80px;overflow:hidden;z-index:4;transform:translateX(-50%)}
-.burrow-rim img{position:absolute;bottom:0;left:-308px;width:864px;height:auto;max-width:none}
+.burrow-rim img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
 .bush-cover{left:calc(50% - 140px);width:280px;bottom:9px;z-index:5}
 .woodland-scene-owl{height:265px}.woodland-scene-owl .scenery-floor{background-color:#e9e6d1;height:110px}.woodland-scene-owl .peek-window{width:285px;height:185px;bottom:57px}.woodland-scene-owl .peek-animal{width:244px}.woodland-scene-owl .bush-cover{bottom:1px;width:270px;left:calc(50% - 135px)}
 .woodland-scene-fox{background:var(--forest);height:325px}.woodland-scene-fox .scenery-floor{background-color:var(--cream);height:123px}.woodland-scene-fox .peek-window{width:220px;height:275px;bottom:51px}.woodland-scene-fox .peek-animal{width:160px}.woodland-scene-fox .bush-cover{bottom:2px;width:310px;left:calc(50% - 155px)}

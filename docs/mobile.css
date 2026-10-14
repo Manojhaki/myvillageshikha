@@ -122,8 +122,8 @@
   .paper-foot { font-size: 10px; }
   .hero-scroll { min-height: 52px; font-size: 11px; }
 
-  .section-copy p:not(.eyebrow):not(.lead):not(.spiral-status):not(.demo-note),
-  .connection .section-copy p:not(.eyebrow):not(.lead):not(.spiral-status):not(.demo-note),
+  .section-copy p:not(.eyebrow):not(.lead):not(.spiral-status),
+  .connection .section-copy p:not(.eyebrow):not(.lead):not(.spiral-status),
   .about-row p,
   .about-end p { font-size: 16px; line-height: 1.75; }
 
@@ -139,7 +139,6 @@
   .cast-grid { gap: 34px; }
 
   .spiral-status { font-size: 13px; }
-  .demo-note { font-size: 12px; }
   .spiral-caption { font-size: 9px; }
   .connection .button,
   .pilot .button { min-height: 48px; font-size: 13px; }

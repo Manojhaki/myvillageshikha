@@ -1,4 +1,4 @@
-import { readFile, stat } from 'node:fs/promises';
+import { readFile, readdir, stat } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
@@ -9,6 +9,8 @@ const root = path.resolve(fileURLToPath(new URL('../docs/', import.meta.url)));
 const entries = ['index.html', 'work-with-us/index.html'];
 const origins = ['/', '/myvillageshikha/'];
 const scripts = new Set();
+const assets = new Set();
+const assetRoot = path.join(root, 'assets');
 let references = 0;
 
 function extract(text, extension) {
@@ -51,6 +53,7 @@ for (const base of origins) {
       try { await stat(filename); }
       catch { throw new Error(`Directory has no index.html: ${relative}`); }
     }
+    if (filename.startsWith(assetRoot + path.sep)) assets.add(filename);
     const extension = path.extname(filename);
     const isText = ['.html', '.css', '.js', '.mjs', '.svg'].includes(extension);
     const contents = isText ? await readFile(filename, 'utf8') : '';
@@ -74,8 +77,12 @@ for (const base of origins) {
   console.log(`Verified ${visited.size} reachable pages and local assets under ${base}`);
 }
 
+for (const asset of await readdir(assetRoot)) {
+  if (!assets.has(path.join(assetRoot, asset))) throw new Error(`Unused asset: assets/${asset}`);
+}
+
 for (const filename of scripts) {
   const result = spawnSync(process.execPath, ['--check', filename], { encoding: 'utf8' });
   if (result.status !== 0) throw new Error(result.stderr || `JavaScript syntax check failed: ${filename}`);
 }
-console.log(`Checked ${references} local references and ${scripts.size} active JavaScript files.`);
+console.log(`Checked ${references} local references, ${scripts.size} active JavaScript files and ${assets.size} assets. No unused assets remain.`);

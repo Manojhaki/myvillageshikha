@@ -29,13 +29,3 @@ dialog?.addEventListener('click', event => {
   if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) dialog.close();
 });
 dialog?.addEventListener('close', () => { document.body.style.overflow = ''; storyTrigger?.focus({preventScroll:true}); });
-
-const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
-if (!reducedMotion.matches && 'IntersectionObserver' in window) {
-  const observer = new IntersectionObserver(entries => entries.forEach(entry => {
-    if (entry.isIntersecting) { entry.target.classList.add('in-view'); observer.unobserve(entry.target); }
-  }), {threshold: 0.12});
-  document.querySelectorAll('[data-reveal]').forEach(element => observer.observe(element));
-}
-
-
