@@ -53,3 +53,4 @@ h1,h2,h3{text-shadow:.45px .7px 0 #243d3214}.site-header{background-image:var(--
 .cast-intro{max-width:340px;font-size:15px;line-height:1.8;align-self:flex-end}
 @media(max-width:850px){.cast-intro{max-width:260px;font-size:13px}}
 @media(max-width:639px){.cast-intro{align-self:flex-start;max-width:none;font-size:15px}}
+.site-footer .copyright{font-size:12px;line-height:1.6;color:#c0cbbc;max-width:360px}

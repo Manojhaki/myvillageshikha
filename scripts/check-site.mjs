@@ -6,7 +6,7 @@ import { spawnSync } from 'node:child_process';
 // Follow the actual entry pages, stylesheets, module imports and local assets.
 // Testing both URL bases catches links that work locally but break on Pages.
 const root = path.resolve(fileURLToPath(new URL('../docs/', import.meta.url)));
-const entries = ['index.html', 'work-with-us/index.html'];
+const entries = ['index.html', 'about/index.html'];
 const origins = ['/', '/myvillageshikha/'];
 const scripts = new Set();
 const assets = new Set();

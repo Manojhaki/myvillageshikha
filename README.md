@@ -2,7 +2,7 @@
 
 An illustrated website for **My Village Shikha**, an animated series in development. Explore the village, meet Maya, Mukunda, Pintu, Aama and Bhumi, and draw the spiral that connects the children to the forest.
 
-The complete website lives in `docs/`. It includes the cardboard artwork, responsive layouts, story dialogs, decorative owl and fox overlays, scroll parallax, a side-view waterfall with moving foam, the Nepal map with Shikha marked, and the interactive spiral drawing activity. The About page is in `docs/work-with-us/`.
+The complete website lives in `docs/`. It includes the cardboard artwork, responsive layouts, story dialogs, decorative owl and fox overlays, scroll parallax, a side-view waterfall with moving foam, the Nepal map with Shikha marked, and the interactive spiral drawing activity. The About page is in `docs/about/`.
 
 ## Preview locally
 
@@ -32,7 +32,7 @@ These steps follow [GitHub's publishing source instructions](https://docs.github
 
 ## Edit and validate
 
-- Edit `docs/index.html` for the main page and `docs/work-with-us/index.html` for About.
+- Edit `docs/index.html` for the main page and `docs/about/index.html` for About.
 - Styles are in `docs/*.css`; artwork and fonts are in `docs/assets/`.
 - `docs/app.js` handles the site interface; `docs/scenery-scroll.js` handles scroll scenery.
 - `docs/spiral-drawing.js` and `docs/spiral-recognition.js` implement the drawing activity.
@@ -47,8 +47,14 @@ The checker follows the main and About pages, their stylesheets, images and modu
 
 ## Website assets
 
-The site includes only the 16 assets used by My Village Shikha: five cast portraits, the village and forest backgrounds, bushes, a side-view waterfall and foam, three decorative woodland animals, a Nepal map, an original cardboard burrow rim, and the Permanent Marker heading font. Unused reference-site artwork, captured SVGs, compiled styles and superseded character/scenery versions have been removed.
+The site includes only the 16 assets used by My Village Shikha: five cast portraits, the village and forest backgrounds, bushes, a side-view waterfall and foam, three decorative woodland animals, a Nepal map, a cardboard burrow rim, and the Permanent Marker heading font.
 
 The heading font's attribution and license are included in [docs/licenses/](docs/licenses/README.md).
 
 Local HTML and CSS links use relative paths so the site works both at a domain root and under the GitHub repository path.
+
+## Story and animation copyright
+
+© 2026 My Village Shikha. Story and animation. All rights reserved.
+
+See [COPYRIGHT.md](COPYRIGHT.md) for the notice. The heading font and map data retain their existing licenses and attribution notices.
