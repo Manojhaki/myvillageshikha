@@ -34,6 +34,8 @@ const leafLayer = document.querySelector('#spiral-leaves');
 if (surface && paper && ink && cursor && status && resetButton && leafLayer) {
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
   const svgNamespace = 'http://www.w3.org/2000/svg';
+  const useTouchEvents = 'ontouchstart' in window;
+  const activeListener = { passive: false };
   let gesture = null;
   let points = [];
   let renderFrame = 0;
@@ -132,9 +134,10 @@ if (surface && paper && ink && cursor && status && resetButton && leafLayer) {
   }
 
   function releasePointer(previousGesture) {
-    if (previousGesture?.kind === 'pointer' && surface.hasPointerCapture(previousGesture.id)) {
-      surface.releasePointerCapture(previousGesture.id);
-    }
+    if (previousGesture?.kind !== 'pointer') return;
+    try {
+      if (paper.hasPointerCapture(previousGesture.id)) paper.releasePointerCapture(previousGesture.id);
+    } catch { /* Window listeners also track strokes when capture is unavailable. */ }
   }
 
   function beginGesture(nextGesture, firstPoint) {
@@ -195,40 +198,77 @@ if (surface && paper && ink && cursor && status && resetButton && leafLayer) {
     }
   }
 
-  surface.addEventListener('pointerdown', event => {
+  // The HTML paper owns input, including its margins and unpainted SVG space.
+  // Touch Events and touch Pointer Events are exclusive to avoid duplicate strokes.
+  paper.addEventListener('pointerdown', event => {
+    if (event.pointerType === 'touch' && useTouchEvents) return;
     if (!event.isPrimary || event.button !== 0 || gesture) return;
     const point = eventPoint(event);
     if (!point) return;
     event.preventDefault();
-    surface.focus({ preventScroll: true });
+    if (event.pointerType !== 'touch') surface.focus({ preventScroll: true });
     beginGesture({ kind: 'pointer', id: event.pointerId }, point);
     try {
-      surface.setPointerCapture(event.pointerId);
-    } catch {
-      cancelGesture('Your line was interrupted. Try again in one continuous stroke.');
-    }
+      paper.setPointerCapture(event.pointerId);
+    } catch { /* Keep tracking through the window if capture is unavailable. */ }
   });
 
-  surface.addEventListener('pointermove', event => {
+  window.addEventListener('pointermove', event => {
     if (gesture?.kind !== 'pointer' || event.pointerId !== gesture.id) return;
     event.preventDefault();
     const samples = event.getCoalescedEvents?.();
     for (const sample of samples?.length ? samples : [event]) appendPoint(eventPoint(sample));
-  });
+  }, activeListener);
 
-  surface.addEventListener('pointerup', event => {
+  window.addEventListener('pointerup', event => {
     if (gesture?.kind !== 'pointer' || event.pointerId !== gesture.id) return;
     event.preventDefault();
     appendPoint(eventPoint(event), true);
     finishGesture();
-  });
+  }, activeListener);
 
-  for (const eventName of ['pointercancel', 'lostpointercapture']) {
-    surface.addEventListener(eventName, event => {
-      if (gesture?.kind === 'pointer' && event.pointerId === gesture.id) {
+  function interruptPointer(event) {
+    if (gesture?.kind === 'pointer' && event.pointerId === gesture.id) {
+      cancelGesture('Your line was interrupted. Try again in one continuous stroke.');
+    }
+  }
+  window.addEventListener('pointercancel', interruptPointer);
+  paper.addEventListener('lostpointercapture', interruptPointer);
+
+  if (useTouchEvents) {
+    const findFinger = event => Array.from(event.changedTouches).find(touch => touch.identifier === gesture?.id);
+    const preventPan = event => { if (event.cancelable) event.preventDefault(); };
+
+    paper.addEventListener('touchstart', event => {
+      preventPan(event);
+      if (gesture) return;
+      const finger = event.changedTouches[0];
+      const point = finger && eventPoint(finger);
+      if (point) beginGesture({ kind: 'touch', id: finger.identifier }, point);
+    }, activeListener);
+
+    paper.addEventListener('touchmove', event => {
+      preventPan(event);
+      if (gesture?.kind !== 'touch') return;
+      const finger = findFinger(event);
+      if (finger) appendPoint(eventPoint(finger));
+    }, activeListener);
+
+    paper.addEventListener('touchend', event => {
+      preventPan(event);
+      if (gesture?.kind !== 'touch') return;
+      const finger = findFinger(event);
+      if (!finger) return;
+      appendPoint(eventPoint(finger), true);
+      finishGesture();
+    }, activeListener);
+
+    paper.addEventListener('touchcancel', event => {
+      preventPan(event);
+      if (gesture?.kind === 'touch' && findFinger(event)) {
         cancelGesture('Your line was interrupted. Try again in one continuous stroke.');
       }
-    });
+    }, activeListener);
   }
 
   surface.addEventListener('keydown', event => {
@@ -240,7 +280,7 @@ if (surface && paper && ink && cursor && status && resetButton && leafLayer) {
       resetDrawing();
       return;
     }
-    if (gesture?.kind === 'pointer') return;
+    if (gesture && gesture.kind !== 'keyboard') return;
     if (startOrFinish) {
       if (event.repeat) return;
       if (gesture?.kind === 'keyboard') finishGesture();

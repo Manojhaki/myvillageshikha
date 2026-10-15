@@ -7,6 +7,7 @@
   "scripts": {
     "dev": "node server.mjs",
     "start": "node server.mjs",
-    "check": "node scripts/check-site.mjs"
+    "check": "node scripts/check-site.mjs && node scripts/test-spiral-input.mjs",
+    "test:spiral": "node scripts/test-spiral-input.mjs"
   }
 }

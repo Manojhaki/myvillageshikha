@@ -2,13 +2,14 @@
    Pointer or keyboard input leaves a hand-drawn line on the paper.
    Releasing a stroke: green connection, or red incomplete connection.
    Success: a single short shower of paper leaves; the green glow remains. */
-.spiral-paper{--drawing-ink:#763c37;--drawing-glow:transparent;isolation:isolate}
+.spiral-paper{--drawing-ink:#763c37;--drawing-glow:transparent;isolation:isolate;touch-action:none;overscroll-behavior:contain;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
 .spiral-paper:before{pointer-events:none;z-index:0;box-shadow:inset 0 0 34px var(--drawing-glow);border-color:#826d4538}
 .spiral-paper:after{z-index:0}
 #spiral-drawing{display:block;position:relative;z-index:2;width:100%;max-width:360px;height:auto;aspect-ratio:1;overflow:visible;touch-action:none;user-select:none;cursor:crosshair;-webkit-tap-highlight-color:transparent;border-radius:8px}
 #spiral-drawing:focus{outline:none}
 .spiral-paper:has(#spiral-drawing:focus-visible):before{border:2px dashed var(--drawing-ink)}
 .spiral-guide{fill:none;stroke:#826d45;stroke-width:3;stroke-linecap:round;stroke-dasharray:2 8;opacity:.33;pointer-events:none}
+.spiral-hit-area{fill:transparent;pointer-events:all}
 .spiral-start{fill:#826d45;opacity:.45;pointer-events:none}
 #spiral-ink{fill:none;stroke:var(--drawing-ink);stroke-width:7;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 7px var(--drawing-glow));pointer-events:none}
 #spiral-cursor{fill:var(--paper);stroke:var(--drawing-ink);stroke-width:2;pointer-events:none}
