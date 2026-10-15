@@ -21,6 +21,14 @@ $env:PORT = '4175'
 npm run dev
 ```
 
+## Host on AWS Amplify
+
+The root `amplify.yml` runs `npm run check` and publishes `docs/` as the website root. The connected `master` branch deploys automatically when changes are pushed.
+
+The publish directory is `docs`, which contains `index.html`, the About page, styles, scripts and artwork. The Node preview server is only needed for local development.
+
+See [AWS Amplify's build specification reference](https://docs.aws.amazon.com/amplify/latest/userguide/yml-specification-syntax.html) for the `artifacts.baseDirectory` setting.
+
 ## Host on GitHub Pages
 
 1. Open this repository on GitHub and choose **Settings → Pages**.

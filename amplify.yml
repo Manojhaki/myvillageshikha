@@ -1,0 +1,10 @@
+version: 1
+frontend:
+  phases:
+    build:
+      commands:
+        - npm run check
+  artifacts:
+    baseDirectory: docs
+    files:
+      - '**/*'
