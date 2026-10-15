@@ -55,7 +55,11 @@ The checker follows the main and About pages, their stylesheets, images and modu
 
 ## Website assets
 
-The site includes only the 16 assets used by My Village Shikha: five cast portraits, the village and forest backgrounds, bushes, a side-view waterfall and foam, three decorative woodland animals, a Nepal map, a cardboard burrow rim, and the Permanent Marker heading font.
+The site includes only the 17 assets used by My Village Shikha: five cast portraits, the village and forest backgrounds, bushes, a side-view waterfall and foam, three decorative woodland animals, a Nepal map, a cardboard burrow rim, the Permanent Marker heading font, and the supplied background music.
+
+## Background music
+
+`docs/assets/shikha-background-music.mp3` is the supplied “सूरज की किरणें (1).mp3” track. Both pages play it on a loop at a gentle default volume and provide a Play/Pause music button. The site attempts playback on load; if the browser blocks audible autoplay, playback starts with the first click, tap or keyboard interaction. An explicit Music off choice is remembered on the device.
 
 The heading font's attribution and license are included in [docs/licenses/](docs/licenses/README.md).
 

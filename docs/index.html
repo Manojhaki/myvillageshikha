@@ -14,6 +14,8 @@
   <link rel="stylesheet" href="./waterfall.css">
   <link rel="stylesheet" href="./spiral-drawing.css">
   <script src="./app.js" defer></script>
+  <link rel="stylesheet" href="./music.css">
+  <script src="./music.js" defer></script>
   <script src="./scenery-scroll.js" defer></script>
   <script src="./spiral-drawing.js" type="module"></script>
 </head>
@@ -23,6 +25,11 @@
     <a class="brand" href="./" aria-label="My Village Shikha home"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 32c-7-7-17 4-10 11 10 11 29 0 24-14-7-20-39-18-42 5-4 29 39 35 51 10"/></svg><span>My Village <small>Shikha</small></span></a>
     <nav aria-label="Primary"><a href="#world">The world</a><a href="#characters">Characters</a><a href="#jhorle">Jhorle</a><a href="./about/">About</a></nav>
   </header>
+  <audio id="background-music" src="./assets/shikha-background-music.mp3" loop preload="auto" hidden></audio>
+  <button class="music-toggle" id="music-toggle" type="button" aria-label="Play background music" aria-pressed="false" data-playing="false" hidden>
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m11 5-6 4H2v6h3l6 4Z"/><path class="music-waves" d="M15 8c2 2 2 6 0 8m3-11c4 4 4 10 0 14"/><path class="music-muted" d="m16 9 5 6m0-6-5 6"/></svg>
+    <span id="music-label">Play music</span>
+  </button>
   <main id="main">
     <section class="hero" data-peek-scene id="home" aria-labelledby="hero-heading">
       <div class="hero-forest" data-background-depth="1" aria-hidden="true"></div>

@@ -1,0 +1,31 @@
+.music-toggle {
+  position: fixed;
+  right: 24px;
+  bottom: max(20px, env(safe-area-inset-bottom));
+  z-index: 20;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 46px;
+  padding: 9px 13px;
+  background-color: var(--paper);
+  background-image: var(--paper-grain);
+  color: var(--forest-deep);
+  border: 1px solid #a67e4c;
+  border-right-width: 3px;
+  border-bottom-width: 5px;
+  border-radius: 4px 7px 5px 3px;
+  box-shadow: 2px 3px 8px #172e2526;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+.music-toggle[hidden] { display: none; }
+.music-toggle svg { width: 21px; height: 21px; flex-shrink: 0; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.music-toggle .music-waves, .music-toggle[data-playing=true] .music-muted { display: none; }
+.music-toggle[data-playing=true] .music-waves { display: block; }
+.music-toggle:active { translate: 0 1px; }
+.music-toggle:disabled { opacity: .7; }
+@media (max-width: 639px) {
+  .music-toggle { right: 12px; bottom: max(12px, env(safe-area-inset-bottom)); padding-inline: 11px; }
+}

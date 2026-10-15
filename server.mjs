@@ -23,6 +23,7 @@ const types = {
   '.woff2': 'font/woff2',
   '.ttf': 'font/ttf',
   '.mp4': 'video/mp4',
+  '.mp3': 'audio/mpeg',
   '.webm': 'video/webm',
   '.pdf': 'application/pdf'
 };
