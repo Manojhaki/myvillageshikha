@@ -70,3 +70,5 @@ Local HTML and CSS links use relative paths so the site works both at a domain r
 © 2026 My Village Shikha. Story and animation. All rights reserved.
 
 See [COPYRIGHT.md](COPYRIGHT.md) for the notice. The heading font and map data retain their existing licenses and attribution notices.
+
+A decorative cardboard red panda crosses the forest path as you scroll, and the waterfall has fifteen independently phased foam layers. Both scenes support reduced motion. Run npm run test:scenery to verify scroll behavior. See FOREST-VISITOR-ARTWORK.md for the character asset and generation prompt.

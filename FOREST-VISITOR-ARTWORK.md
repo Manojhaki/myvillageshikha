@@ -1,0 +1,9 @@
+# Red panda forest visitor
+
+Asset: `docs/assets/cardboard-red-panda.png` (1536 × 1024 PNG with alpha transparency).
+
+Created with the built-in ImageGen tool for My Village Shikha. The red panda is a decorative forest visitor that crosses a layered cardboard path as the reader scrolls. It is not an addition to the story's named cast.
+
+## Final generation prompt
+
+Use case: stylized-concept. Asset type: a transparent website animation sprite for My Village Shikha, a tactile cardboard storybook forest. Create one adorable baby red panda forest animal, full body including bushy ringed tail, in a clear walking pose toward the RIGHT. Three-quarter side profile, head slightly turned toward viewer, happy curious expression, large dark glossy toy eyes with little highlights, cream cheeks and eyebrows, tiny dark nose, rounded cream-lined ears, terracotta/rust body, dark warm-brown paws, generous fluffy ringed tail curling upward behind it on the LEFT. The animal must be a handmade flat layered corrugated cardboard puppet photographed in a studio: exposed thick corrugated cut edges around every shape, rough torn kraft fibers, visible matte painted paper grain, separate stacked cut-paper layers for muzzle, ears, paws and tail bands, slightly uneven hand-cut contours. Soft warm upper-left light with small shadows BETWEEN cardboard layers. Cute rounded proportions, big head and short legs. Full animal centered and contained with 6 percent transparent margin, landscape canvas, facing right, four paws clearly readable. Real alpha transparency surrounding the animal and between legs. No scenery, no bush, no ground platform, no background glow, no shadow outside the silhouette, no text, no watermarks, no additional animals. This asset will move horizontally across a layered cardboard woodland scene; its silhouette must read at 160-240px wide.

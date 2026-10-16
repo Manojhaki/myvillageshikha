@@ -8,6 +8,12 @@
  *  64–84%   animal tucks behind the cover, reveal 1 → 0
  * 84–100%   only the bushes and cardboard opening remain
  *
+ * FOREST CROSSING
+ *   0–14%   a red panda waits behind the left paper bushes
+ *  14–86%   the cutout walks left → right across the forest path
+ * 86–100%   the red panda disappears behind the right bushes
+ *           each small paper step follows scroll, never a clock
+ *
  * WATERFALL AND FOAM
  *   0–100%  paper water advances down the side-view fall on every scroll
  *   0–100%  staggered foam layers swell, separate and drift downstream
@@ -30,10 +36,19 @@
     cycles:       3.25, // Repeated forming across the entire visible scroll span.
     minimumScale: 0.72, // Smaller foam between surges remains visible.
     maximumScale: 1.18, // A newly formed cluster briefly swells.
-    minimumAlpha: 0.5,  // Seven staggered patches never all disappear.
+    minimumAlpha: 0.5,  // Fifteen staggered patches never all disappear.
     maximumAlpha: 1,    // Strongest paper highlight at the crest of a surge.
     surgeTravel:  0.12, // A small lateral wave on top of the parallax drift.
     minimumLift:  0.6  // Even near-impact patches lift slightly as they form.
+  };
+
+  const CROSSING = {
+    start:       0.14, // Begin behind the left bushes as the scene enters.
+    end:         0.86, // Reach the right bushes before the scene leaves.
+    steps:       8,    // Small cutout steps across one complete crossing.
+    bob:         { desktop: 5, mobile: 3 }, // Lift above the path, px.
+    tilt:        1.4,  // Gentle paper rocking at each step, degrees.
+    neutral:     0.5  // Centered, still fallback for reduced motion.
   };
 
   const MOTION = {
@@ -51,6 +66,8 @@
   const scenes = Array.from(document.querySelectorAll('[data-peek-scene]'), element => ({
     element,
     animals: Array.from(element.querySelectorAll('[data-peek-animal]')),
+    crossingStage: element.querySelector('.crossing-stage'),
+    travelers: Array.from(element.querySelectorAll('[data-crossing-animal]')),
     foam: Array.from(element.querySelectorAll('[data-waterfall-foam]'), patch => ({
       element: patch,
       phase: numericFoamValue(patch.dataset.foamPhase, 0),
@@ -119,6 +136,18 @@
     return clamp((viewportHeight - rect.top) / (viewportHeight + rect.height));
   }
 
+  function crossingAt(progress, stageWidth, animalWidth, size) {
+    const amount = progress === null ? CROSSING.neutral : smoothStep(CROSSING.start, CROSSING.end, progress);
+    const stride = amount * CROSSING.steps * Math.PI;
+    const moving = progress !== null && amount > 0 && amount < 1;
+    return {
+      // Half a cutout beyond either stage edge keeps the entrances covered.
+      x: (amount - CROSSING.neutral) * (stageWidth + animalWidth),
+      y: moving ? -Math.abs(Math.sin(stride)) * CROSSING.bob[size] : 0,
+      tilt: moving ? Math.sin(stride) * CROSSING.tilt : 0
+    };
+  }
+
   function write(element, property, value, unit = '') {
     const formatted = `${Number(value.toFixed(MOTION.precision))}${unit}`;
     let cache = previousValues.get(element);
@@ -151,11 +180,21 @@
     scene.water.forEach(water => write(water, '--water-flow', progress === null ? 0 : progress * MOTION.waterFlow[size], 'px'));
   }
 
+  function writeCrossing(scene, progress, crossing, size) {
+    scene.travelers.forEach((animal, index) => {
+      const values = crossingAt(progress, crossing?.width || 0, crossing?.animalWidths[index] || 0, size);
+      write(animal, '--crossing-x', values.x, 'px');
+      write(animal, '--crossing-y', values.y, 'px');
+      write(animal, '--crossing-tilt', values.tilt, 'deg');
+    });
+  }
+
   function restoreStaticScenery() {
     root.classList.remove('scenery-ready');
     scenes.forEach(scene => {
       writeScene(scene, 1, 0, 0);
       writeWaterfall(scene, null);
+      writeCrossing(scene, null);
     });
     backgrounds.forEach(background => write(background.element, '--background-y', 0, 'px'));
   }
@@ -174,14 +213,22 @@
       const size = window.innerWidth <= MOTION.mobileBreakpoint ? 'mobile' : 'desktop';
 
       // Measure static scene anchors together before writing any transforms.
-      const scenePositions = scenes.map(scene => ({ scene, rect: scene.element.getBoundingClientRect() }));
+      const scenePositions = scenes.map(scene => ({
+        scene,
+        rect: scene.element.getBoundingClientRect(),
+        crossing: scene.crossingStage ? {
+          width: scene.crossingStage.clientWidth,
+          animalWidths: scene.travelers.map(animal => animal.offsetWidth)
+        } : null
+      }));
       const backgroundPositions = backgrounds.map(background => ({ background, rect: background.anchor.getBoundingClientRect() }));
 
-      scenePositions.forEach(({ scene, rect }) => {
+      scenePositions.forEach(({ scene, rect, crossing }) => {
         const progress = progressAt(rect, viewportHeight);
         const direction = progress * 2 - 1;
         writeScene(scene, revealAt(progress), direction * MOTION.scene[size], direction * MOTION.depth[size]);
         writeWaterfall(scene, progress, size);
+        writeCrossing(scene, progress, crossing, size);
       });
       backgroundPositions.forEach(({ background, rect }) => {
         const direction = progressAt(rect, viewportHeight) * 2 - 1;

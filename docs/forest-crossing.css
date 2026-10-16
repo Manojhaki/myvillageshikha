@@ -1,0 +1,171 @@
+/* SCROLL STORYBOARD
+   The red panda emerges behind the left bushes, crosses the paper path,
+   then slips behind the right bushes. Every step reverses with scrolling.
+   With no script or reduced motion, it rests visibly in the center. */
+.forest-crossing {
+  position: relative;
+  isolation: isolate;
+  height: 430px;
+  overflow: hidden;
+  pointer-events: none;
+  user-select: none;
+  background-color: #e8eadb;
+  background-image: var(--paper-grain);
+}
+
+.forest-crossing::before,
+.forest-crossing::after {
+  content: '';
+  position: absolute;
+  z-index: 8;
+  left: 0;
+  right: 0;
+  height: 24px;
+  background: var(--cream);
+  clip-path: polygon(0 0,100% 0,100% 54%,89% 67%,75% 45%,58% 60%,42% 42%,27% 65%,12% 43%,0 61%);
+}
+
+.forest-crossing::before { top: -1px; }
+.forest-crossing::after { bottom: -1px; rotate: 180deg; }
+
+.crossing-stage {
+  position: relative;
+  width: min(1240px, 100%);
+  height: 100%;
+  margin-inline: auto;
+}
+
+.crossing-ridge {
+  position: absolute;
+  z-index: 0;
+  inset: 50px -15% 32px;
+  background-color: #a4b396;
+  background-image: var(--paper-grain);
+  clip-path: polygon(0 56%,9% 42%,20% 54%,34% 21%,47% 42%,61% 15%,74% 45%,86% 32%,100% 54%,100% 100%,0 100%);
+  transform: translate3d(0, var(--depth-y, 0px), 0);
+}
+
+.crossing-ridge::after {
+  content: '';
+  position: absolute;
+  inset: 93px -4% -10px;
+  background-color: #71876a;
+  background-image: var(--paper-grain);
+  clip-path: polygon(0 52%,14% 29%,30% 51%,47% 18%,61% 47%,79% 28%,100% 57%,100% 100%,0 100%);
+}
+
+.crossing-path {
+  position: absolute;
+  z-index: 1;
+  left: -10%;
+  right: -10%;
+  bottom: -32px;
+  height: 170px;
+  background-color: #cfb284;
+  background-image: var(--paper-grain);
+  clip-path: polygon(0 24%,11% 18%,25% 25%,39% 16%,51% 21%,64% 14%,79% 23%,91% 18%,100% 24%,100% 100%,0 100%);
+  transform: translate3d(0, var(--depth-y, 0px), 0);
+}
+
+.crossing-path::before {
+  content: '';
+  position: absolute;
+  inset: 56px 0 70px;
+  background-color: #e3cba7;
+  background-image: var(--paper-grain);
+  clip-path: polygon(0 38%,14% 23%,28% 35%,43% 16%,57% 30%,72% 22%,85% 35%,100% 18%,100% 89%,82% 70%,66% 88%,48% 68%,32% 85%,15% 69%,0 86%);
+}
+
+.crossing-bush {
+  position: absolute;
+  display: block;
+  width: 390px;
+  height: auto;
+  max-width: none;
+  transform: translate3d(0, var(--depth-y, 0px), 0);
+  filter: drop-shadow(2px 5px 2px #243d322b);
+}
+
+.crossing-bush-back { z-index: 2; bottom: 100px; width: 370px; }
+.crossing-bush-back-left { left: -110px; }
+.crossing-bush-back-right { right: -110px; scale: -1 1; }
+.crossing-bush-front-left { z-index: 5; bottom: -32px; left: -154px; width: 430px; }
+.crossing-bush-front-right { z-index: 5; bottom: -38px; right: -154px; width: 430px; scale: -1 1; }
+
+.crossing-traveler {
+  position: absolute;
+  z-index: 3;
+  left: 50%;
+  bottom: 92px;
+  width: clamp(210px, 24vw, 270px);
+  transform: translate3d(calc(-50% + var(--crossing-x, 0px)), var(--crossing-y, 0px), 0);
+}
+
+.crossing-traveler::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  left: 12%;
+  right: 8%;
+  bottom: -5px;
+  height: 14px;
+  border-radius: 50%;
+  background: #5d50332c;
+  filter: blur(3px);
+}
+
+.crossing-animal {
+  display: block;
+  width: 100%;
+  height: auto;
+  transform: rotate(var(--crossing-tilt, 0deg));
+  transform-origin: 50% 94%;
+  filter: drop-shadow(2px 4px 1px #48342030);
+}
+
+.crossing-grass {
+  position: absolute;
+  z-index: 6;
+  left: -5%;
+  right: -5%;
+  bottom: 11px;
+  height: 48px;
+  background-color: #657c5a;
+  background-image: var(--paper-grain);
+  clip-path: polygon(0 57%,6% 42%,11% 64%,17% 29%,22% 60%,29% 44%,34% 69%,41% 34%,47% 65%,54% 43%,61% 63%,66% 30%,73% 61%,79% 40%,85% 65%,92% 35%,100% 58%,100% 100%,0 100%);
+  transform: translate3d(0, var(--depth-y, 0px), 0);
+}
+
+.scenery-ready .crossing-traveler { will-change: transform; }
+
+@media (max-width: 850px) {
+  .forest-crossing { height: 400px; }
+  .crossing-bush-back { width: 310px; bottom: 100px; }
+  .crossing-bush-back-left { left: -140px; }
+  .crossing-bush-back-right { right: -140px; }
+  .crossing-bush-front-left { left: -175px; width: 380px; }
+  .crossing-bush-front-right { right: -175px; width: 380px; }
+}
+
+@media (max-width: 639px) {
+  .forest-crossing { height: 360px; }
+  .crossing-ridge { inset: 32px -35% 24px; }
+  .crossing-ridge::after { top: 100px; }
+  .crossing-path { height: 153px; bottom: -29px; }
+  .crossing-traveler { width: 178px; bottom: 83px; }
+  .crossing-bush-back { width: 255px; bottom: 101px; }
+  .crossing-bush-back-left { left: -160px; }
+  .crossing-bush-back-right { right: -160px; }
+  .crossing-bush-front-left { left: -171px; bottom: -15px; width: 290px; }
+  .crossing-bush-front-right { right: -171px; bottom: -20px; width: 290px; }
+  .crossing-grass { bottom: 8px; height: 40px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .crossing-traveler { transform: translateX(-50%) !important; will-change: auto !important; }
+  .crossing-animal { transform: none !important; }
+  .crossing-ridge,
+  .crossing-path,
+  .crossing-bush,
+  .crossing-grass { transform: none !important; }
+}
