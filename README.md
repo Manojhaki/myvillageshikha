@@ -74,3 +74,5 @@ See [COPYRIGHT.md](COPYRIGHT.md) for the notice. The heading font and map data r
 A decorative cardboard red panda crosses the forest path with four separately animated legs as you scroll, and the waterfall has fifteen independently phased foam layers. Both scenes support reduced motion. Run npm run test:scenery to verify scroll behavior. See FOREST-VISITOR-ARTWORK.md for the character asset and generation prompt.
 
 The owl flaps its hinged cardboard wings as you scroll. Two fox cubs peek out beside the adult fox with a short stagger. Reduced motion leaves both scenes still. See FOREST-FAMILY-ARTWORK.md for the cub artwork and prompts.
+
+Both pages begin with a spiral loading screen. It promotes lazy artwork to eager loading, decodes HTML/SVG/CSS images, loads the heading font and waits for deferred scripts before revealing the completed page. Audio buffering does not block the visual reveal. Slow or failed requests offer manual entry and retry controls; the page remains readable without JavaScript. Run `node scripts/test-site-loader.mjs` to check the loading gate.

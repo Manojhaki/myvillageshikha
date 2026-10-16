@@ -7,8 +7,9 @@
   "scripts": {
     "dev": "node server.mjs",
     "start": "node server.mjs",
-    "check": "node scripts/check-site.mjs && node scripts/test-spiral-input.mjs && node scripts/test-scenery-scroll.mjs",
+    "check": "node scripts/check-site.mjs && node scripts/test-spiral-input.mjs && node scripts/test-scenery-scroll.mjs && node scripts/test-site-loader.mjs",
     "test:spiral": "node scripts/test-spiral-input.mjs",
-    "test:scenery": "node scripts/test-scenery-scroll.mjs"
+    "test:scenery": "node scripts/test-scenery-scroll.mjs",
+    "test:loader": "node scripts/test-site-loader.mjs"
   }
 }
