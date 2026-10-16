@@ -97,7 +97,7 @@
   position: absolute;
   z-index: 3;
   left: 50%;
-  bottom: 92px;
+  bottom: 80px;
   width: clamp(210px, 24vw, 270px);
   transform: translate3d(calc(-50% + var(--crossing-x, 0px)), var(--crossing-y, 0px), 0);
 }
