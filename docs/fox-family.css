@@ -1,0 +1,16 @@
+/* Square cub artwork sits high enough for cheeks and eyes to clear the paper bush. */
+.woodland-scene-fox .fox-cub-window{width:126px;height:184px;bottom:120px;z-index:4}
+.woodland-scene-fox .fox-cub-window-left{left:calc(50% - 128px)}
+.woodland-scene-fox .fox-cub-window-right{left:calc(50% + 128px);bottom:116px}
+.woodland-scene-fox .fox-cub{width:110px}
+.woodland-scene-fox .fox-cub-window-left .fox-cub{rotate:-5deg;transform-origin:50% 90%}
+.woodland-scene-fox .fox-cub-window-right .fox-cub{rotate:5deg;transform-origin:50% 90%}
+.woodland-scene-fox .bush-cover{width:360px;left:calc(50% - 180px)}
+
+@media(max-width:639px){
+  .woodland-scene-fox .fox-cub-window{width:96px;height:146px;bottom:100px}
+  .woodland-scene-fox .fox-cub-window-left{left:calc(50% - 99px)}
+  .woodland-scene-fox .fox-cub-window-right{left:calc(50% + 99px);bottom:96px}
+  .woodland-scene-fox .fox-cub{width:84px}
+  .woodland-scene-fox .bush-cover{width:300px;left:calc(50% - 150px)}
+}

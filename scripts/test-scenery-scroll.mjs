@@ -11,8 +11,10 @@ const source = await readFile(new URL('scenery-scroll.js', siteRoot), 'utf8');
 const markup = await readFile(new URL('index.html', siteRoot), 'utf8');
 const crossingStyles = await readFile(new URL('forest-crossing.css', siteRoot), 'utf8');
 const foamTags = [...markup.matchAll(/<div\b[^>]*\bdata-waterfall-foam\b[^>]*>/g)].map(match => match[0]);
+const cubTags = [...markup.matchAll(/<[a-z][^>]*\bdata-fox-cub\b[^>]*>/g)].map(match => match[0]);
 const attribute = (tag, name) => tag.match(new RegExp(`\\b${name}="([^"]*)"`))?.[1];
 const gaitProperties = ['--gait-a-angle', '--gait-b-angle', '--gait-a-lift', '--gait-b-lift'];
+const owlProperties = ['--owl-left-angle', '--owl-right-angle', '--owl-wing-scale'];
 
 class Element {
   constructor(name, dataset = {}) {
@@ -59,6 +61,8 @@ function harness({ width = 1440, height = 900, stageWidth = width - 48, traveler
   const traveler = new Element('crossing animal');
   traveler.offsetWidth = travelerWidth;
   const animal = new Element('peeking animal');
+  const owl = new Element('owl puppet');
+  const cubs = cubTags.map((tag, index) => new Element(`fox cub ${index + 1}`, { peekOffset: attribute(tag, 'data-peek-offset') }));
   const layer = new Element('depth layer', { depth: '.6' });
   const water = new Element('water');
   const foam = foamTags.map((tag, index) => new Element(`foam ${index + 1}`, {
@@ -73,7 +77,8 @@ function harness({ width = 1440, height = 900, stageWidth = width - 48, traveler
   };
   scene.querySelector = selector => selector === '.crossing-stage' ? stage : null;
   scene.querySelectorAll = selector => ({
-    '[data-peek-animal]': [animal],
+    '[data-peek-animal]': [animal, owl, ...cubs],
+    '[data-owl-puppet]': [owl],
     '[data-crossing-animal]': [traveler],
     '[data-waterfall-foam]': foam,
     '[data-water-flow]': [water],
@@ -95,7 +100,7 @@ function harness({ width = 1440, height = 900, stageWidth = width - 48, traveler
     for (const [id, callback] of pending) { frames.delete(id); callback(); }
   }
   function at(nextProgress) { progress = nextProgress; window.dispatch('scroll'); flush(); }
-  return { root, document, window, media, scene, stage, traveler, animal, layer, water, foam, background, frames, flush, at };
+  return { root, document, window, media, scene, stage, traveler, animal, owl, cubs, layer, water, foam, background, frames, flush, at };
 }
 
 let passed = 0;
@@ -103,6 +108,10 @@ function test(name, check) { check(); passed++; console.log(`PASS ${name}`); }
 
 function gaitSnapshot(h) {
   return gaitProperties.map(property => h.traveler.value(property));
+}
+
+function owlSnapshot(h) {
+  return owlProperties.map(property => h.owl.value(property));
 }
 
 // Select a traveled distance using the controller's actual rendered position.
@@ -137,6 +146,68 @@ test('scroll events batch into one frame and stop requesting frames while idle',
   assert.equal(h.traveler.writes, writes, 'unchanged positions do not repeat inline writes');
   assert.equal(h.frames.size, 0);
   assert.equal(h.window.listeners.get('scroll')[0].options.passive, true);
+});
+
+test('the owl wings flap in opposite directions with reversible scroll and rest when idle', () => {
+  assert.ok(/<svg\b[^>]*\bdata-owl-puppet\b/.test(markup), 'the visible owl uses the scroll-controlled cardboard wing rig');
+  const h = harness();
+  const positions = [.31, .36, .43, .48, .55, .6, .72, .8];
+  const snapshots = positions.map(progress => {
+    h.at(progress);
+    const values = owlSnapshot(h);
+    assert.ok(Math.abs(values[0] + values[1]) < .002, 'left and right paper shoulders flap together in mirrored directions');
+    assert.ok(Math.abs(values[0]) <= 24.001, 'the wingbeat stays within a gentle cardboard shoulder range');
+    assert.ok(values[2] >= .84 && values[2] <= 1, 'wing foreshortening remains subtle and bounded');
+    return values;
+  });
+  assert.ok(snapshots.some(values => values[0] < -10) && snapshots.some(values => values[0] > 10), 'scrolling produces both halves of a full wingbeat');
+  assert.ok(new Set(snapshots.map(values => values.join(','))).size > 5, 'the wing joints change through the owl parallax passage');
+  [...positions.keys()].reverse().forEach(index => {
+    h.at(positions[index]);
+    assert.deepEqual(owlSnapshot(h), snapshots[index], 'reverse scrolling restores the same exact wing pose');
+  });
+  const frozen = [...h.owl.properties];
+  const writes = h.owl.writes;
+  h.window.dispatch('scroll');
+  h.flush();
+  assert.deepEqual([...h.owl.properties], frozen, 'the owl holds its wing pose while the page is still');
+  assert.equal(h.owl.writes, writes, 'idle scroll frames do not write a new wing pose');
+  assert.equal(h.frames.size, 0, 'flapping never starts a clock-driven animation loop');
+});
+
+test('owl wingbeats soften behind the cover and return to a neutral hidden pose', () => {
+  const h = harness();
+  h.at(.174375);
+  const emerging = Math.abs(h.owl.value('--owl-left-angle'));
+  h.at(.351875);
+  assert.ok(Math.abs(h.owl.value('--owl-left-angle')) > 20, 'a fully emerged owl has a visible wingbeat');
+  assert.ok(emerging < 6, 'the same wingbeat is softened while most of the owl is hidden');
+  for (const progress of [0, .1, .13, .84, .9, 1]) {
+    h.at(progress);
+    assert.deepEqual(owlSnapshot(h), [0, 0, 1], `the hidden owl rests at scene progress ${progress}`);
+  }
+});
+
+test('two fox cubs follow the parent reveal with a short reversible stagger', () => {
+  assert.equal(cubTags.length, 2, 'the page includes two baby fox cutouts');
+  const offsets = cubTags.map(tag => Number(attribute(tag, 'data-peek-offset')));
+  assert.ok(offsets[0] > 0 && offsets[1] > offsets[0] && offsets[1] <= .1, 'cub offsets are short, ordered and keep the family together');
+  cubTags.forEach(tag => assert.match(tag, /\bdata-peek-animal\b/, 'each baby fox participates in the same scroll scene'));
+  const h = harness();
+  h.at(.26);
+  const emerging = [h.animal, ...h.cubs].map(animal => animal.value('--reveal'));
+  assert.ok(emerging[0] > emerging[1] && emerging[1] > emerging[2], 'the parent pops up before each cub');
+  h.at(.5);
+  assert.deepEqual([h.animal, ...h.cubs].map(animal => animal.value('--reveal')), [1, 1, 1], 'all three foxes share a fully visible central pose');
+  h.at(.78);
+  const retreating = [h.animal, ...h.cubs].map(animal => animal.value('--reveal'));
+  assert.ok(retreating[0] < retreating[1] && retreating[1] < retreating[2], 'the cubs tuck behind their cover just after the parent');
+  for (const progress of [0, 1]) {
+    h.at(progress);
+    assert.deepEqual([h.animal, ...h.cubs].map(animal => animal.value('--reveal')), [0, 0, 0], 'every fox is covered at the scene endpoints');
+  }
+  h.at(.78);
+  assert.deepEqual([h.animal, ...h.cubs].map(animal => animal.value('--reveal')), retreating, 'reverse scrolling restores the same staggered family pose');
 });
 
 test('the forest animal travels sideways monotonically and reverses exactly when scrolling back', () => {
@@ -302,6 +373,8 @@ test('reduced motion centers the new animal and restores a fully visible still w
   assert.deepEqual(gaitSnapshot(h), [0, 0, 0, 0], 'reduced motion resets every moving paper leg');
   assert.equal(h.scene.value('--scene-shift'), 0);
   assert.equal(h.animal.value('--reveal'), 1);
+  h.cubs.forEach(cub => assert.equal(cub.value('--reveal'), 1, 'reduced motion leaves every cub visible'));
+  assert.deepEqual(owlSnapshot(h), [0, 0, 1], 'reduced motion resets both paper wings');
   assert.equal(h.layer.value('--depth-y'), 0);
   assert.equal(h.water.value('--water-flow'), 0);
   assert.equal(h.background.value('--background-y'), 0);
@@ -314,6 +387,7 @@ test('reduced motion centers the new animal and restores a fully visible still w
   h.at(.9);
   assert.equal(h.traveler.value('--crossing-x'), 0, 'scrolling cannot animate reduced-motion artwork');
   assert.deepEqual(gaitSnapshot(h), [0, 0, 0, 0], 'reduced motion keeps paper legs still on later scrolls');
+  assert.deepEqual(owlSnapshot(h), [0, 0, 1], 'reduced motion keeps owl wings still on later scrolls');
   h.media.matches = false;
   h.media.dispatch('change');
   h.flush();
@@ -325,6 +399,8 @@ test('an initially reduced-motion page shows the animal without waiting for inte
   h.flush();
   assert.equal(h.traveler.value('--crossing-x'), 0);
   assert.deepEqual(gaitSnapshot(h), [0, 0, 0, 0]);
+  assert.deepEqual(owlSnapshot(h), [0, 0, 1]);
+  h.cubs.forEach(cub => assert.equal(cub.value('--reveal'), 1));
   assert.equal(h.root.classes.has('scenery-ready'), false);
   assert.equal(h.frames.size, 0);
 });
@@ -338,6 +414,8 @@ test('a failed scene measurement restores neutral cardboard legs instead of stra
   h.flush();
   assert.deepEqual(gaitSnapshot(h), [0, 0, 0, 0], 'the error fallback resets all paper joints');
   assert.equal(h.traveler.value('--crossing-x'), 0, 'the still panda returns to the center');
+  assert.deepEqual(owlSnapshot(h), [0, 0, 1], 'the error fallback resets the owl wing joints');
+  h.cubs.forEach(cub => assert.equal(cub.value('--reveal'), 1, 'the error fallback leaves each fox cub visible'));
   assert.equal(h.root.classes.has('scenery-ready'), false);
   h.window.dispatch('scroll');
   assert.equal(h.frames.size, 0, 'a failed measurement never causes a retry loop');

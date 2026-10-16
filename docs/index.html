@@ -10,6 +10,8 @@
   <link rel="stylesheet" href="./style.css">
   <link rel="stylesheet" href="./mobile.css">
   <link rel="stylesheet" href="./woodland.css">
+  <link rel="stylesheet" href="./owl-wings.css">
+  <link rel="stylesheet" href="./fox-family.css">
   <link rel="stylesheet" href="./forest-crossing.css">
   <link rel="stylesheet" href="./location.css">
   <link rel="stylesheet" href="./waterfall.css">
@@ -180,7 +182,23 @@
         <div class="bush-layer bush-back-left" data-depth="-.3"><img src="./assets/cardboard-forest-bushes.png" alt="" loading="lazy" decoding="async"></div>
         <div class="bush-layer bush-back-right" data-depth=".25"><img src="./assets/cardboard-forest-bushes.png" alt="" loading="lazy" decoding="async"></div>
         
-        <div class="peek-window"><img class="peek-animal" data-peek-animal src="./assets/woodland-owl-overlay.png" alt="" loading="lazy" decoding="async"></div>
+        <div class="peek-window"><svg class="peek-animal owl-puppet" data-peek-animal="" data-owl-puppet="" viewBox="0 0 1536 1024" width="1536" height="1024" aria-hidden="true" focusable="false">
+  <defs>
+    <image id="owl-cardboard-texture" href="./assets/woodland-owl-overlay.png" width="1536" height="1024"/>
+    <clipPath id="owl-left-wing-clip" clipPathUnits="userSpaceOnUse">
+      <path d="M0 0H480V300L505 420L536 505L615 525L595 610L560 680L420 740H0Z"/>
+    </clipPath>
+    <clipPath id="owl-right-wing-clip" clipPathUnits="userSpaceOnUse">
+      <path d="M1110 0H1536V800H1030L1010 735L1025 650L1000 535L1070 465L1100 390L1110 300Z"/>
+    </clipPath>
+    <clipPath id="owl-body-clip" clipPathUnits="userSpaceOnUse">
+      <path d="M480 0H1110V300L1100 390L1070 465L1010 535L1025 650L1010 735L970 815L910 845L930 1024H485V870L420 830V740L550 680L575 600L598 530L536 505L505 420L480 300Z"/>
+    </clipPath>
+  </defs>
+  <g class="owl-wing owl-wing-left"><use href="#owl-cardboard-texture" clip-path="url(#owl-left-wing-clip)"/></g>
+  <g class="owl-wing owl-wing-right"><use href="#owl-cardboard-texture" clip-path="url(#owl-right-wing-clip)"/></g>
+  <use href="#owl-cardboard-texture" clip-path="url(#owl-body-clip)"/>
+</svg></div>
         
         <div class="bush-layer bush-front-left" data-depth=".7"><img src="./assets/cardboard-forest-bushes.png" alt="" loading="lazy" decoding="async"></div>
         <div class="bush-layer bush-front-right" data-depth="-.8"><img src="./assets/cardboard-forest-bushes.png" alt="" loading="lazy" decoding="async"></div>
@@ -247,6 +265,8 @@
         <div class="bush-layer bush-back-right" data-depth=".25"><img src="./assets/cardboard-forest-bushes.png" alt="" loading="lazy" decoding="async"></div>
         
         <div class="peek-window"><img class="peek-animal" data-peek-animal src="./assets/woodland-fox-overlay.png" alt="" loading="lazy" decoding="async"></div>
+          <div class="peek-window fox-cub-window fox-cub-window-left"><img class="peek-animal fox-cub" data-peek-animal data-fox-cub data-peek-offset=".03" width="1254" height="1254" src="./assets/cardboard-fox-cub-curious.png" alt="" loading="lazy" decoding="async"></div>
+          <div class="peek-window fox-cub-window fox-cub-window-right"><img class="peek-animal fox-cub" data-peek-animal data-fox-cub data-peek-offset=".07" width="1254" height="1254" src="./assets/cardboard-fox-cub-playful.png" alt="" loading="lazy" decoding="async"></div>
         
         <div class="bush-layer bush-front-left" data-depth=".7"><img src="./assets/cardboard-forest-bushes.png" alt="" loading="lazy" decoding="async"></div>
         <div class="bush-layer bush-front-right" data-depth="-.8"><img src="./assets/cardboard-forest-bushes.png" alt="" loading="lazy" decoding="async"></div>

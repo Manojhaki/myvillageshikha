@@ -1,0 +1,18 @@
+/* ANIMATION STORYBOARD
+   Scrolling into view: the owl rises behind its cardboard bush.
+   Continuing to scroll: both wings pivot at their shoulders in opposite arcs.
+   Scroll pauses: the wings hold their pose. Reduced motion: wings rest open.
+   The single original texture is clipped into a body and two hinged wings. */
+.woodland-scene-owl .peek-window{width:310px;height:208px;bottom:49px}
+.woodland-scene-owl .owl-puppet{width:244px;height:auto;aspect-ratio:3/2;overflow:visible}
+.owl-wing{transform-box:view-box;transform:rotate(var(--owl-wing-angle,0deg)) scaleY(var(--owl-wing-scale,1))}
+.owl-wing-left{--owl-wing-angle:var(--owl-left-angle,0deg);transform-origin:600px 520px}
+.owl-wing-right{--owl-wing-angle:var(--owl-right-angle,0deg);transform-origin:1010px 520px}
+.scenery-ready .owl-wing{will-change:transform}
+@media(max-width:639px){
+  .woodland-scene-owl .peek-window{width:250px;height:180px;bottom:43px}
+  .woodland-scene-owl .owl-puppet{width:194px}
+}
+@media(prefers-reduced-motion:reduce){
+  .owl-wing{transform:none!important;will-change:auto!important}
+}

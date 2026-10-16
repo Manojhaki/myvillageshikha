@@ -7,6 +7,9 @@
  *  34–64%   animal rests while scenery shifts at different depths
  *  64–84%   animal tucks behind the cover, reveal 1 → 0
  * 84–100%   only the bushes and cardboard opening remain
+ *           fox cubs emerge and retreat just after their parent
+ *  13–84%   owl wings open and fold four times with scene progress
+ *           the flap softens as the owl tucks behind its cover
  *
  * FOREST CROSSING
  *   0–14%   a red panda waits behind the left paper bushes
@@ -30,7 +33,14 @@
     appearStart: 0.13, // First glimpse as the scenic band enters.
     appearEnd:   0.34, // Fully emerged before the band reaches the center.
     tuckStart:   0.64, // Begin retreating after the band passes the center.
-    tuckEnd:     0.84  // Hidden before the band leaves the viewport.
+    tuckEnd:     0.84, // Hidden before the band leaves the viewport.
+    maxStagger:  0.1   // A cub stays close to the parent's reveal window.
+  };
+
+  const OWL = {
+    cycles:           4,    // Four wingbeats over the visible scenic passage.
+    swing:            24,   // Mirrored cardboard shoulder rotation, degrees.
+    minimumWingScale: 0.84  // Wings foreshorten slightly as they fold.
   };
 
   const FOAM = {
@@ -72,7 +82,11 @@
   const root = document.documentElement;
   const scenes = Array.from(document.querySelectorAll('[data-peek-scene]'), element => ({
     element,
-    animals: Array.from(element.querySelectorAll('[data-peek-animal]')),
+    animals: Array.from(element.querySelectorAll('[data-peek-animal]'), animal => ({
+      element: animal,
+      offset: Math.min(numericFoamValue(animal.dataset.peekOffset, 0), PHASE.maxStagger)
+    })),
+    owls: Array.from(element.querySelectorAll('[data-owl-puppet]')),
     crossingStage: element.querySelector('.crossing-stage'),
     travelers: Array.from(element.querySelectorAll('[data-crossing-animal]')),
     foam: Array.from(element.querySelectorAll('[data-waterfall-foam]'), patch => ({
@@ -126,6 +140,19 @@
     return emerging * (1 - retreating);
   }
 
+  function owlAt(progress) {
+    if (progress === null) return { left: 0, right: 0, scale: 1 };
+    const visible = revealAt(progress);
+    const passage = clamp((progress - PHASE.appearStart) / (PHASE.tuckEnd - PHASE.appearStart));
+    const beat = Math.sin(passage * OWL.cycles * Math.PI * 2);
+    const angle = beat * OWL.swing * visible;
+    return {
+      left: angle,
+      right: -angle,
+      scale: 1 - (1 - OWL.minimumWingScale) * Math.abs(beat) * visible
+    };
+  }
+
   function foamAt(progress, phase, depth, travelDistance, liftDistance) {
     const angle = (progress * FOAM.cycles + phase) * Math.PI * 2;
     const wave = Math.sin(angle);
@@ -173,11 +200,21 @@
     cache.set(property, formatted);
   }
 
-  function writeScene(scene, reveal, shift, depthShift) {
-    write(scene.element, '--reveal', reveal);
+  function writeScene(scene, progress, shift, depthShift) {
+    write(scene.element, '--reveal', progress === null ? 1 : revealAt(progress));
     write(scene.element, '--scene-shift', shift, 'px');
-    scene.animals.forEach(animal => write(animal, '--reveal', reveal));
+    scene.animals.forEach(animal => write(animal.element, '--reveal', progress === null ? 1 : revealAt(clamp(progress - animal.offset))));
     scene.layers.forEach(layer => write(layer.element, '--depth-y', depthShift * layer.depth, 'px'));
+  }
+
+  function writeOwls(scene, progress) {
+    if (!scene.owls.length) return;
+    const values = owlAt(progress);
+    scene.owls.forEach(owl => {
+      write(owl, '--owl-left-angle', values.left, 'deg');
+      write(owl, '--owl-right-angle', values.right, 'deg');
+      write(owl, '--owl-wing-scale', values.scale);
+    });
   }
 
   function writeWaterfall(scene, progress, size) {
@@ -209,7 +246,8 @@
   function restoreStaticScenery() {
     root.classList.remove('scenery-ready');
     scenes.forEach(scene => {
-      writeScene(scene, 1, 0, 0);
+      writeScene(scene, null, 0, 0);
+      writeOwls(scene, null);
       writeWaterfall(scene, null);
       writeCrossing(scene, null);
     });
@@ -243,7 +281,8 @@
       scenePositions.forEach(({ scene, rect, crossing }) => {
         const progress = progressAt(rect, viewportHeight);
         const direction = progress * 2 - 1;
-        writeScene(scene, revealAt(progress), direction * MOTION.scene[size], direction * MOTION.depth[size]);
+        writeScene(scene, progress, direction * MOTION.scene[size], direction * MOTION.depth[size]);
+        writeOwls(scene, progress);
         writeWaterfall(scene, progress, size);
         writeCrossing(scene, progress, crossing, size);
       });
