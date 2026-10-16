@@ -1,6 +1,7 @@
 /* SCROLL STORYBOARD
    The red panda emerges behind the left bushes, crosses the paper path,
-   then slips behind the right bushes. Every step reverses with scrolling.
+   then slips behind the right bushes. Opposite pairs of paper legs take
+   turns swinging and lifting. Every step reverses with scrolling.
    With no script or reduced motion, it rests visibly in the center. */
 .forest-crossing {
   position: relative;
@@ -118,10 +119,35 @@
   display: block;
   width: 100%;
   height: auto;
+  overflow: visible;
   transform: rotate(var(--crossing-tilt, 0deg));
   transform-origin: 50% 94%;
   filter: drop-shadow(2px 4px 1px #48342030);
 }
+
+/* The body covers the far-leg joints; the near-leg fur overlaps its edge.
+   Keep clipping inside each rotating group so its texture moves with it. */
+.crossing-leg {
+  transform-box: view-box;
+  transform: translateY(var(--leg-lift, 0px)) rotate(var(--leg-angle, 0deg));
+}
+
+.crossing-leg-far-hind,
+.crossing-leg-near-fore {
+  --leg-angle: var(--gait-a-angle, 0deg);
+  --leg-lift: var(--gait-a-lift, 0px);
+}
+
+.crossing-leg-far-fore,
+.crossing-leg-near-hind {
+  --leg-angle: var(--gait-b-angle, 0deg);
+  --leg-lift: var(--gait-b-lift, 0px);
+}
+
+.crossing-leg-far-hind { transform-origin: 550px 660px; }
+.crossing-leg-far-fore { transform-origin: 1005px 724px; }
+.crossing-leg-near-hind { transform-origin: 677px 550px; }
+.crossing-leg-near-fore { transform-origin: 1030px 614px; }
 
 .crossing-grass {
   position: absolute;
@@ -164,6 +190,7 @@
 @media (prefers-reduced-motion: reduce) {
   .crossing-traveler { transform: translateX(-50%) !important; will-change: auto !important; }
   .crossing-animal { transform: none !important; }
+  .crossing-leg { transform: none !important; }
   .crossing-ridge,
   .crossing-path,
   .crossing-bush,

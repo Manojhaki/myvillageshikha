@@ -9,8 +9,10 @@ import vm from 'node:vm';
 const siteRoot = new URL(existsSync(new URL('../dist/scenery-scroll.js', import.meta.url)) ? '../dist/' : '../docs/', import.meta.url);
 const source = await readFile(new URL('scenery-scroll.js', siteRoot), 'utf8');
 const markup = await readFile(new URL('index.html', siteRoot), 'utf8');
+const crossingStyles = await readFile(new URL('forest-crossing.css', siteRoot), 'utf8');
 const foamTags = [...markup.matchAll(/<div\b[^>]*\bdata-waterfall-foam\b[^>]*>/g)].map(match => match[0]);
 const attribute = (tag, name) => tag.match(new RegExp(`\\b${name}="([^"]*)"`))?.[1];
+const gaitProperties = ['--gait-a-angle', '--gait-b-angle', '--gait-a-lift', '--gait-b-lift'];
 
 class Element {
   constructor(name, dataset = {}) {
@@ -99,6 +101,28 @@ function harness({ width = 1440, height = 900, stageWidth = width - 48, traveler
 let passed = 0;
 function test(name, check) { check(); passed++; console.log(`PASS ${name}`); }
 
+function gaitSnapshot(h) {
+  return gaitProperties.map(property => h.traveler.value(property));
+}
+
+// Select a traveled distance using the controller's actual rendered position.
+// This lets responsive checks exercise its easing without reimplementing it.
+function atTravelDistance(h, distance) {
+  h.at(0);
+  const start = h.traveler.value('--crossing-x');
+  let low = 0;
+  let high = 1;
+  for (let index = 0; index < 32; index++) {
+    const progress = (low + high) / 2;
+    h.at(progress);
+    if (h.traveler.value('--crossing-x') - start < distance) low = progress;
+    else high = progress;
+  }
+  h.at((low + high) / 2);
+  assert.ok(Math.abs(h.traveler.value('--crossing-x') - start - distance) < .002, 'the controller reached the requested measured distance');
+  return gaitSnapshot(h);
+}
+
 test('scroll events batch into one frame and stop requesting frames while idle', () => {
   const h = harness();
   assert.equal(h.frames.size, 1, 'initial rendering is scheduled once');
@@ -160,6 +184,93 @@ test('resizing recalculates sideways travel from the new stage and character wid
   assert.equal(h.traveler.value('--crossing-x'), (1160 + 190) / 2);
 });
 
+test('four separately clipped cardboard legs surround the body in a believable depth order', () => {
+  const legGroups = [...markup.matchAll(/<g\b[^>]*class="([^"]*\bcrossing-leg\b[^"]*)"[^>]*>([\s\S]*?)<\/g>/g)];
+  assert.equal(legGroups.length, 4, 'the panda has four separately moving leg groups');
+  const clipIds = new Set([...markup.matchAll(/<clipPath\b[^>]*\bid="([^"]+)"/g)].map(match => match[1]));
+  const legNames = ['far-hind', 'far-fore', 'near-hind', 'near-fore'];
+  const body = markup.match(/<image\b[^>]*class="crossing-body"[^>]*>/);
+  assert.ok(body, 'the body is its own cardboard artwork layer');
+  assert.match(body[0], /href="\.\/assets\/[^"/]*body[^"/]*\.png"/, 'the body references the dedicated leg-free artwork');
+  const bodyFile = attribute(body[0], 'href');
+  assert.ok(existsSync(new URL(bodyFile, siteRoot)), 'the body artwork ships with the site');
+  for (const name of legNames) {
+    const group = legGroups.find(match => match[1].split(/\s+/).includes(`crossing-leg-${name}`));
+    assert.ok(group, `the ${name} leg is present`);
+    const clip = group[2].match(/clip-path="url\(#([^)]*)\)"/)?.[1];
+    assert.ok(clipIds.has(clip), `the ${name} leg uses a defined cardboard clipping path`);
+    assert.match(group[2], /<use\b[^>]*href="#[^"]+"/, `the ${name} leg reuses the original textured artwork`);
+    assert.ok(name.startsWith('far-') ? group.index < body.index : group.index > body.index, `the ${name} leg is on the correct side of the body`);
+  }
+});
+
+test('leg styles connect each diagonal pair to its own gait and default to a still pose', () => {
+  const rules = [...crossingStyles.replace(/\/\*[\s\S]*?\*\//g, '').matchAll(/([^{}]+)\{([^{}]*)\}/g)];
+  const ruleFor = selector => rules.find(match => match[1].trim().split(/\s*,\s*/).includes(selector))?.[2];
+  for (const [pair, names] of [['a', ['far-hind', 'near-fore']], ['b', ['far-fore', 'near-hind']]]) {
+    for (const name of names) {
+      const rule = ruleFor(`.crossing-leg-${name}`);
+      assert.ok(rule, `the ${name} leg has a gait binding`);
+      assert.ok(rule.includes(`var(--gait-${pair}-angle, 0deg)`), `the ${name} leg swings with the correct diagonal and defaults to zero`);
+      assert.ok(rule.includes(`var(--gait-${pair}-lift, 0px)`), `the ${name} leg lifts with the correct diagonal and defaults to zero`);
+    }
+  }
+  const transform = ruleFor('.crossing-leg');
+  assert.ok(transform.includes('var(--leg-lift, 0px)') && transform.includes('var(--leg-angle, 0deg)'), 'without a script, every paper joint rests in its original pose');
+  assert.match(crossingStyles, /@media\s*\(prefers-reduced-motion:\s*reduce\)[\s\S]*?\.crossing-leg\s*\{\s*transform:\s*none\s*!important;/, 'the stylesheet independently disables leg motion for reduced motion');
+});
+
+test('the diagonal leg pairs oppose one another, change while traveling and reverse exactly with scroll', () => {
+  const h = harness();
+  const positions = [.18, .22, .31, .45, .58, .71, .82];
+  const snapshots = positions.map(progress => {
+    h.at(progress);
+    const values = gaitSnapshot(h);
+    assert.ok(Math.abs(values[0] + values[1]) < .002, 'diagonal leg pairs swing in opposite directions');
+    assert.ok(Math.abs(values[0]) <= 14.001 && Math.abs(values[1]) <= 14.001, 'paper joints keep a gentle bounded swing');
+    assert.ok(values[2] <= 0 && values[3] <= 0, 'feet lift above the path');
+    assert.ok(values[2] >= -18.001 && values[3] >= -18.001, 'paper feet keep a bounded lift');
+    assert.ok(Math.max(values[2], values[3]) > -.002, 'the supporting diagonal remains planted');
+    return values;
+  });
+  assert.ok(new Set(snapshots.map(values => values.join(','))).size > 4, 'sideways travel produces distinct walking poses');
+  [...positions.keys()].reverse().forEach(index => {
+    h.at(positions[index]);
+    assert.deepEqual(gaitSnapshot(h), snapshots[index], 'reverse scrolling restores the same exact leg pose');
+  });
+  const frozen = [...h.traveler.properties];
+  const writes = h.traveler.writes;
+  h.window.dispatch('scroll');
+  h.flush();
+  assert.deepEqual([...h.traveler.properties], frozen, 'idle scrolling leaves the walking pose frozen');
+  assert.equal(h.traveler.writes, writes, 'idle frames do not write another gait pose');
+  assert.equal(h.frames.size, 0, 'walking never starts a clock-driven animation loop');
+});
+
+test('walking cadence follows traveled animal widths on both phone and desktop', () => {
+  const snapshots = [];
+  for (const [width, stageWidth, travelerWidth] of [[390, 358, 178], [1440, 1240, 270]]) {
+    const h = harness({ width, stageWidth, travelerWidth });
+    const stride = travelerWidth * .55;
+    const quarter = atTravelDistance(h, stride * .25);
+    const opposite = atTravelDistance(h, stride * .75);
+    const repeat = atTravelDistance(h, stride * 1.25);
+    assert.ok(Math.abs(quarter[0]) > 13.9, 'a quarter stride reaches a visible leg swing');
+    assert.ok(quarter[0] * opposite[0] < 0, 'opposite halves of a step switch the advancing diagonal');
+    quarter.forEach((value, index) => assert.ok(Math.abs(value - repeat[index]) < .01, 'one rendered stride returns to the same walking pose'));
+    snapshots.push(quarter);
+  }
+  snapshots[0].forEach((value, index) => assert.ok(Math.abs(value - snapshots[1][index]) < .01, 'phone and desktop walking cover the same fraction of a character width per step'));
+});
+
+test('crossing endpoints leave every paper leg in a neutral resting pose', () => {
+  const h = harness();
+  for (const progress of [0, .1, .14, .86, .95, 1]) {
+    h.at(progress);
+    assert.deepEqual(gaitSnapshot(h), [0, 0, 0, 0], `legs rest outside the moving crossing at ${progress}`);
+  }
+});
+
 test('fifteen differently phased foam patches keep forming on every scroll in either direction', () => {
   assert.ok(foamTags.length >= 15, 'the page includes the added foam layers');
   assert.ok(new Set(foamTags.map(tag => attribute(tag, 'data-foam-phase'))).size >= 12, 'foam phases remain staggered');
@@ -188,6 +299,7 @@ test('reduced motion centers the new animal and restores a fully visible still w
   h.flush();
   assert.equal(h.root.classes.has('scenery-ready'), false);
   for (const property of ['--crossing-x', '--crossing-y', '--crossing-tilt']) assert.equal(h.traveler.value(property), 0);
+  assert.deepEqual(gaitSnapshot(h), [0, 0, 0, 0], 'reduced motion resets every moving paper leg');
   assert.equal(h.scene.value('--scene-shift'), 0);
   assert.equal(h.animal.value('--reveal'), 1);
   assert.equal(h.layer.value('--depth-y'), 0);
@@ -201,6 +313,7 @@ test('reduced motion centers the new animal and restores a fully visible still w
   });
   h.at(.9);
   assert.equal(h.traveler.value('--crossing-x'), 0, 'scrolling cannot animate reduced-motion artwork');
+  assert.deepEqual(gaitSnapshot(h), [0, 0, 0, 0], 'reduced motion keeps paper legs still on later scrolls');
   h.media.matches = false;
   h.media.dispatch('change');
   h.flush();
@@ -211,8 +324,23 @@ test('an initially reduced-motion page shows the animal without waiting for inte
   const h = harness({ reduced: true });
   h.flush();
   assert.equal(h.traveler.value('--crossing-x'), 0);
+  assert.deepEqual(gaitSnapshot(h), [0, 0, 0, 0]);
   assert.equal(h.root.classes.has('scenery-ready'), false);
   assert.equal(h.frames.size, 0);
+});
+
+test('a failed scene measurement restores neutral cardboard legs instead of stranding a walking pose', () => {
+  const h = harness();
+  h.at(.45);
+  assert.ok(gaitSnapshot(h).some(value => value !== 0), 'the test starts from a walking pose');
+  h.scene.getBoundingClientRect = () => { throw new Error('layout unavailable'); };
+  h.window.dispatch('resize');
+  h.flush();
+  assert.deepEqual(gaitSnapshot(h), [0, 0, 0, 0], 'the error fallback resets all paper joints');
+  assert.equal(h.traveler.value('--crossing-x'), 0, 'the still panda returns to the center');
+  assert.equal(h.root.classes.has('scenery-ready'), false);
+  h.window.dispatch('scroll');
+  assert.equal(h.frames.size, 0, 'a failed measurement never causes a retry loop');
 });
 
 test('hidden pages and page exits cancel pending work, and returning resumes with one frame', () => {

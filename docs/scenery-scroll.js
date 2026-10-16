@@ -12,6 +12,7 @@
  *   0–14%   a red panda waits behind the left paper bushes
  *  14–86%   the cutout walks left → right across the forest path
  * 86–100%   the red panda disappears behind the right bushes
+ *           opposite leg pairs swing and lift with distance travelled
  *           each small paper step follows scroll, never a clock
  *
  * WATERFALL AND FOAM
@@ -45,10 +46,16 @@
   const CROSSING = {
     start:       0.14, // Begin behind the left bushes as the scene enters.
     end:         0.86, // Reach the right bushes before the scene leaves.
-    steps:       8,    // Small cutout steps across one complete crossing.
     bob:         { desktop: 5, mobile: 3 }, // Lift above the path, px.
     tilt:        1.4,  // Gentle paper rocking at each step, degrees.
     neutral:     0.5  // Centered, still fallback for reduced motion.
+  };
+
+  const GAIT = {
+    strideWidth: 0.55, // One full leg cycle travels this fraction of the cutout width.
+    swing:       14,   // Opposite pairs turn around their cardboard shoulder/hip, deg.
+    lift:        18,   // A lifted paw clears the path in original artwork units.
+    bobCycles:   2    // The body settles once for each diagonal pair's step.
   };
 
   const MOTION = {
@@ -138,13 +145,19 @@
 
   function crossingAt(progress, stageWidth, animalWidth, size) {
     const amount = progress === null ? CROSSING.neutral : smoothStep(CROSSING.start, CROSSING.end, progress);
-    const stride = amount * CROSSING.steps * Math.PI;
-    const moving = progress !== null && amount > 0 && amount < 1;
+    const moving = progress !== null && amount > 0 && amount < 1 && animalWidth > 0;
+    const distance = amount * (stageWidth + animalWidth);
+    const stride = moving ? distance / (animalWidth * GAIT.strideWidth) * Math.PI * 2 : 0;
+    const swing = Math.sin(stride);
     return {
       // Half a cutout beyond either stage edge keeps the entrances covered.
       x: (amount - CROSSING.neutral) * (stageWidth + animalWidth),
-      y: moving ? -Math.abs(Math.sin(stride)) * CROSSING.bob[size] : 0,
-      tilt: moving ? Math.sin(stride) * CROSSING.tilt : 0
+      y: moving ? -(1 - Math.cos(stride * GAIT.bobCycles)) / 2 * CROSSING.bob[size] : 0,
+      tilt: moving ? swing * CROSSING.tilt : 0,
+      angleA: moving ? swing * GAIT.swing : 0,
+      angleB: moving ? -swing * GAIT.swing : 0,
+      liftA: moving ? -Math.max(0, swing) * GAIT.lift : 0,
+      liftB: moving ? -Math.max(0, -swing) * GAIT.lift : 0
     };
   }
 
@@ -186,6 +199,10 @@
       write(animal, '--crossing-x', values.x, 'px');
       write(animal, '--crossing-y', values.y, 'px');
       write(animal, '--crossing-tilt', values.tilt, 'deg');
+      write(animal, '--gait-a-angle', values.angleA, 'deg');
+      write(animal, '--gait-b-angle', values.angleB, 'deg');
+      write(animal, '--gait-a-lift', values.liftA, 'px');
+      write(animal, '--gait-b-lift', values.liftB, 'px');
     });
   }
 

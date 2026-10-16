@@ -101,7 +101,22 @@
         <img class="crossing-bush crossing-bush-back crossing-bush-back-left" data-depth="-.3" src="./assets/cardboard-forest-bushes.png" alt="" loading="lazy" decoding="async">
         <img class="crossing-bush crossing-bush-back crossing-bush-back-right" data-depth="-.15" src="./assets/cardboard-forest-bushes.png" alt="" loading="lazy" decoding="async">
         <div class="crossing-path" data-depth=".12"></div>
-        <div class="crossing-traveler" data-crossing-animal><img class="crossing-animal" src="./assets/cardboard-red-panda.png" alt="" width="1536" height="1024" loading="lazy" decoding="async"></div>
+        <div class="crossing-traveler" data-crossing-animal>
+          <svg class="crossing-animal" viewBox="0 0 1536 1024" width="1536" height="1024" aria-hidden="true" focusable="false">
+            <defs>
+              <image id="crossing-panda-texture" href="./assets/cardboard-red-panda.png" width="1536" height="1024"/>
+              <clipPath id="crossing-far-hind-clip" clipPathUnits="userSpaceOnUse"><path d="M552 625 C533 663 505 697 475 714 C438 732 411 762 397 798 C380 836 388 878 408 893 C440 911 492 908 525 894 C552 881 552 852 535 833 L515 816 L571 789 L609 706 Z"/></clipPath>
+              <clipPath id="crossing-far-fore-clip" clipPathUnits="userSpaceOnUse"><path d="M984 683 C1008 697 1046 731 1065 756 L1030 836 C1065 838 1081 858 1077 882 C1075 908 1046 918 997 916 C949 919 917 914 911 890 C905 863 918 822 927 789 L950 713 Z"/></clipPath>
+              <clipPath id="crossing-near-hind-clip" clipPathUnits="userSpaceOnUse"><path d="M680 474 C594 482 551 546 550 622 C551 697 574 813 616 885 C639 930 698 930 748 922 C803 923 829 904 827 872 C825 831 785 811 749 818 L710 834 C727 778 764 730 779 658 C794 594 778 508 723 482 Z"/></clipPath>
+              <clipPath id="crossing-near-fore-clip" clipPathUnits="userSpaceOnUse"><path d="M1006 625 C972 620 947 627 948 648 C949 704 978 756 1017 798 C1058 843 1117 882 1189 893 C1241 895 1283 879 1299 850 C1317 817 1298 786 1268 777 C1254 773 1240 775 1223 779 L1169 731 L1141 680 C1138 650 1112 626 1071 625 Z"/></clipPath>
+            </defs>
+            <g class="crossing-leg crossing-leg-far-hind"><g clip-path="url(#crossing-far-hind-clip)"><use href="#crossing-panda-texture"/></g></g>
+            <g class="crossing-leg crossing-leg-far-fore"><g clip-path="url(#crossing-far-fore-clip)"><use href="#crossing-panda-texture"/></g></g>
+            <image class="crossing-body" href="./assets/cardboard-red-panda-body.png" width="1536" height="1024"/>
+            <g class="crossing-leg crossing-leg-near-hind"><g clip-path="url(#crossing-near-hind-clip)"><use href="#crossing-panda-texture"/></g></g>
+            <g class="crossing-leg crossing-leg-near-fore"><g clip-path="url(#crossing-near-fore-clip)"><use href="#crossing-panda-texture"/></g></g>
+          </svg>
+        </div>
         <img class="crossing-bush crossing-bush-front-left" data-depth=".6" src="./assets/cardboard-forest-bushes.png" alt="" loading="lazy" decoding="async">
         <img class="crossing-bush crossing-bush-front-right" data-depth=".8" src="./assets/cardboard-forest-bushes.png" alt="" loading="lazy" decoding="async">
         <div class="crossing-grass" data-depth=".6"></div>
