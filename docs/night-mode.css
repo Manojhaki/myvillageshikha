@@ -124,7 +124,16 @@
   rotate: -9deg;
   transform: translate3d(0, var(--background-y, 0px), 0);
 }
-.waterfall-moon { z-index: 1; width: 93px; left: 66%; top: 25px; rotate: -13deg; }
+/* Keep the moon in the distant ridge's coordinate and parallax layer. */
+.waterfall-moon {
+  z-index: 0;
+  width: 93px;
+  height: auto;
+  left: 66%;
+  top: calc(50% - 130px);
+  rotate: -13deg;
+  transform: translate3d(0, var(--depth-y, 0px), 0);
+}
 .moonlit-haze {
   position: absolute;
   inset: 0;
@@ -369,7 +378,7 @@ html.theme-changing .mode-track::before { transition: left 300ms ease, backgroun
   html[data-theme='night'] .mode-track::before { left: 21px; }
   .hero-figure-bhumi { height: 325px; width: 85%; left: 7.5%; }
   .paper-moon { width: 62px; left: 20px; bottom: 365px; }
-  .waterfall-moon { top: 5px; left: 7%; width: 52px; }
+  .waterfall-moon { top: calc(50% - 60px); left: 70%; width: 52px; }
   html[data-theme='night'] #mouse-glimpse .peek-window { width: 205px; height: 175px; }
   html[data-theme='night'] #mouse-glimpse .peek-animal { width: 200px; bottom: -18px; }
   html[data-theme='night'] .crossing-traveler-night { width: 228px; bottom: 84px; }
