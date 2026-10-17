@@ -181,7 +181,6 @@
         <div class="crossing-traveler crossing-traveler-night" data-crossing-animal="">
           <svg class="crossing-animal civet-puppet" viewBox="0 0 1774 887" width="1774" height="887" aria-hidden="true" focusable="false">
             <defs>
-              <image id="civet-cardboard-texture" data-night-src="./assets/night-civet.png" width="1774" height="887"/>
               <clipPath id="civet-far-hind-clip" clipPathUnits="userSpaceOnUse">
                 <path d="M777 543 L829 588 L811 657 L737 697 C766 704 790 724 795 753 C801 779 784 789 759 790 L710 788 C674 787 653 772 649 742 C643 714 650 694 665 672 L738 589 Z"/>
               </clipPath>
@@ -195,11 +194,12 @@
                 <path d="M1244 467 C1214 478 1208 508 1219 547 C1226 579 1244 610 1272 636 L1356 706 C1392 735 1419 763 1451 783 C1481 802 1519 801 1557 795 C1590 794 1616 784 1626 763 C1639 737 1621 706 1595 691 C1575 679 1544 682 1514 694 L1457 642 L1416 594 L1393 546 C1380 510 1366 485 1330 473 C1300 461 1269 458 1244 467 Z"/>
               </clipPath>
             </defs>
-            <g class="crossing-leg civet-leg-far-hind"><g clip-path="url(#civet-far-hind-clip)"><use href="#civet-cardboard-texture"/></g></g>
-            <g class="crossing-leg civet-leg-far-fore"><g clip-path="url(#civet-far-fore-clip)"><use href="#civet-cardboard-texture"/></g></g>
+            <!-- Direct image layers repaint reliably when night mode assigns their artwork. -->
+            <g class="crossing-leg civet-leg-far-hind"><g clip-path="url(#civet-far-hind-clip)"><image data-night-src="./assets/night-civet.png" width="1774" height="887"/></g></g>
+            <g class="crossing-leg civet-leg-far-fore"><g clip-path="url(#civet-far-fore-clip)"><image data-night-src="./assets/night-civet.png" width="1774" height="887"/></g></g>
             <image class="crossing-body civet-body" data-night-src="./assets/night-civet-body.png" width="1774" height="887"/>
-            <g class="crossing-leg civet-leg-near-hind"><g clip-path="url(#civet-near-hind-clip)"><use href="#civet-cardboard-texture"/></g></g>
-            <g class="crossing-leg civet-leg-near-fore"><g clip-path="url(#civet-near-fore-clip)"><use href="#civet-cardboard-texture"/></g></g>
+            <g class="crossing-leg civet-leg-near-hind"><g clip-path="url(#civet-near-hind-clip)"><image data-night-src="./assets/night-civet.png" width="1774" height="887"/></g></g>
+            <g class="crossing-leg civet-leg-near-fore"><g clip-path="url(#civet-near-fore-clip)"><image data-night-src="./assets/night-civet.png" width="1774" height="887"/></g></g>
           </svg>
         </div>
 

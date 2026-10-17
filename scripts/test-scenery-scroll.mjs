@@ -281,7 +281,7 @@ test('four separately clipped cardboard legs surround the body in a believable d
   }
 });
 
-test('the night civet has four deferred textured paper legs around its dedicated body', () => {
+test('the night civet loads four direct deferred leg images around its dedicated body', () => {
   const rig = markup.match(/<svg\b(?=[^>]*\bclass="[^"]*\bcivet-puppet\b)[^>]*>[\s\S]*?<\/svg>/)?.[0];
   assert.ok(rig, 'night mode includes its own civet puppet');
   assert.match(rig, /viewBox="0 0 1774 887"/, 'the original artwork and body share the registered canvas');
@@ -291,13 +291,14 @@ test('the night civet has four deferred textured paper legs around its dedicated
   assert.equal(new Set(definitions).size, definitions.length, 'the civet has no duplicate definition IDs');
   definitions.forEach(id => assert.ok(id.startsWith('civet-'), 'civet definitions cannot collide with the daytime panda'));
   const clipIds = new Set([...rig.matchAll(/<clipPath\b[^>]*\bid="([^"]+)"/g)].map(match => match[1]));
-  const texture = rig.match(/<image\b[^>]*\bid="civet-cardboard-texture"[^>]*>/)?.[0];
   const body = rig.match(/<image\b[^>]*\bclass="[^"]*\bcivet-body\b[^"]*"[^>]*>/);
-  assert.ok(texture && body, 'the original civet texture and leg-free body remain separate image layers');
-  assert.equal(attribute(texture, 'data-night-src'), './assets/night-civet.png');
+  assert.ok(body, 'the leg-free body remains its own image layer');
+  assert.doesNotMatch(rig, /<use\b/i, 'civet legs render directly instead of cloning an initially sourceless image');
+  const images = [...rig.matchAll(/<image\b[^>]*>/g)].map(match => match[0]);
+  assert.equal(images.length, 5, 'four direct leg images and the body are the only civet image layers');
   assert.equal(attribute(body[0], 'data-night-src'), './assets/night-civet-body.png');
-  for (const image of [texture, body[0]]) {
-    assert.ok(!/\s(?:href|xlink:href)="[^\"]+"/.test(image), 'night textures do not download through an active daytime href');
+  for (const image of images) {
+    assert.ok(!/\s(?:href|xlink:href)\s*=/.test(image), 'night textures do not download through a daytime href');
     assert.equal(attribute(image, 'width'), '1774');
     assert.equal(attribute(image, 'height'), '887');
   }
@@ -308,7 +309,10 @@ test('the night civet has four deferred textured paper legs around its dedicated
       assert.ok(group, `the civet ${name} leg is present`);
       const clip = group[2].match(/clip-path="url\(#([^)]*)\)"/)?.[1];
       assert.ok(clipIds.has(clip), `the civet ${name} leg uses a defined clipping path`);
-      assert.match(group[2], /<use\b[^>]*href="#civet-cardboard-texture"/, 'each clipped leg preserves the original cardboard grain');
+      const legImages = [...group[2].matchAll(/<image\b[^>]*>/g)];
+      assert.equal(legImages.length, 1, `the civet ${name} leg renders its own image inside the clipping group`);
+      assert.equal(attribute(legImages[0][0], 'data-night-src'), './assets/night-civet.png', `the civet ${name} leg participates directly in deferred night loading`);
+      assert.ok(existsSync(new URL(attribute(legImages[0][0], 'data-night-src'), siteRoot)), `the civet ${name} leg artwork ships with the site`);
       assert.ok(name.startsWith('far-') ? group.index < body.index : group.index > body.index, `the civet ${name} leg has the correct depth`);
       const rule = rules.find(match => match[1].trim().split(/\s*,\s*/).includes(`.civet-puppet .civet-leg-${name}`))?.[2];
       assert.ok(rule?.includes(`var(--gait-${pair}-angle, 0deg)`) && rule.includes(`var(--gait-${pair}-lift, 0px)`), `the civet ${name} leg uses the correct diagonal gait`);
