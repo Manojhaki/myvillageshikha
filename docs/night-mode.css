@@ -354,11 +354,15 @@ html.theme-changing .mode-track::before { transition: left 300ms ease, backgroun
   .paper-moon { right: 46px; top: 33px; width: 94px; }
 }
 @media (max-width: 759px) {
+  html[data-theme='night'] .hero-forest { background-size: auto 520px; background-position: 60% bottom; }
+  html[data-theme='night'] .hero-forest::before { content: ''; position: absolute; inset: 0; background: linear-gradient(to bottom, #152f38 calc(100% - 520px), transparent calc(100% - 440px)); }
   .paper-moon { top: auto; bottom: 365px; right: auto; left: 24px; width: 70px; z-index: 4; }
   .hero-figure-bhumi { height: 340px; width: 83%; left: 8.5%; }
   html[data-theme='night'] .cast-caption-night { display: none; }
 }
 @media (max-width: 639px) {
+  html[data-theme='night'] .hero-forest { background-size: auto 500px; }
+  html[data-theme='night'] .hero-forest::before { background: linear-gradient(to bottom, #152f38 calc(100% - 500px), transparent calc(100% - 420px)); }
   .world-mode-control { left: 12px; bottom: max(12px, env(safe-area-inset-bottom)); max-width: calc(100vw - 145px); }
   #world-mode-toggle { gap: 6px; padding-inline: 9px; font-size: 11px; }
   .mode-track { width: 45px; }
@@ -372,6 +376,8 @@ html.theme-changing .mode-track::before { transition: left 300ms ease, backgroun
   html[data-theme='night'] .crossing-traveler-night::before { bottom: 8px; }
 }
 @media (max-width: 359px) {
+  html[data-theme='night'] .hero-forest { background-size: auto 450px; }
+  html[data-theme='night'] .hero-forest::before { background: linear-gradient(to bottom, #152f38 calc(100% - 450px), transparent calc(100% - 370px)); }
   .hero-figure-bhumi { height: 288px; width: 88%; left: 6%; }
   .paper-moon { width: 58px; left: 16px; bottom: 325px; }
   #world-mode-toggle { padding-inline: 8px; gap: 5px; }
