@@ -44,12 +44,15 @@
   <link rel="stylesheet" href="./location.css">
   <link rel="stylesheet" href="./waterfall.css">
   <link rel="stylesheet" href="./spiral-drawing.css">
+  <script src="./night-mode.js" defer></script>
   <script src="./site-loader.js" defer onerror="document.documentElement.classList.remove('site-loading')"></script>
   <script src="./app.js" defer></script>
   <link rel="stylesheet" href="./music.css">
   <script src="./music.js" defer></script>
   <script src="./scenery-scroll.js" defer></script>
   <script src="./spiral-drawing.js" type="module"></script>
+  <link rel="stylesheet" href="./night-civet.css">
+  <link rel="stylesheet" href="./night-mode.css">
 </head>
 <body>
   <div id="site-loader" role="status" aria-live="polite">
@@ -74,19 +77,33 @@
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m11 5-6 4H2v6h3l6 4Z"/><path class="music-waves" d="M15 8c2 2 2 6 0 8m3-11c4 4 4 10 0 14"/><path class="music-muted" d="m16 9 5 6m0-6-5 6"/></svg>
     <span id="music-label">Play music</span>
   </button>
+  <div class="world-mode-control" hidden>
+    <button id="world-mode-toggle" type="button" role="switch" aria-checked="false" aria-label="Night mode" title="Explore the village at night">
+      <span class="mode-day">Day</span><span class="mode-track" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4" fill="currentColor"/><path d="M12 1v3m0 16v3M1 12h3m16 0h3M4 4l2 2m12 12 2 2M4 20l2-2M18 6l2-2" stroke="currentColor" stroke-width="1.8"/></svg><svg viewBox="0 0 24 24"><path d="M19 15a8 8 0 0 1-10-10 8 8 0 1 0 10 10Z" fill="currentColor"/></svg></span><span class="mode-night">Night</span>
+    </button>
+    <p id="world-mode-status" role="status" aria-live="polite"></p>
+  </div>
   <main id="main">
     <section class="hero" data-peek-scene id="home" aria-labelledby="hero-heading">
-      <div class="hero-forest" data-background-depth="1" aria-hidden="true"></div>
+      <div class="hero-forest" data-background-depth="1" data-night-src="./assets/night-forest.png" aria-hidden="true"></div>
+      <svg class="paper-moon" data-background-depth=".12" viewBox="0 0 160 160" width="160" height="160" aria-hidden="true" focusable="false">
+        <defs><radialGradient id="hero-moon-face" cx="33%" cy="27%" r="80%"><stop stop-color="#fff4d2"/><stop offset="1" stop-color="#c8cbb3"/></radialGradient><pattern id="hero-moon-grain" width="9" height="6" patternUnits="userSpaceOnUse"><path d="M1 1h3m2 3h2M0 5h2" stroke="#7d8267" stroke-width=".55" opacity=".16"/></pattern></defs>
+        <circle cx="82" cy="83" r="66" fill="#726e51"/><circle cx="78" cy="78" r="66" fill="url(#hero-moon-face)" stroke="#d4c89e" stroke-width="2"/><circle cx="78" cy="78" r="65" fill="url(#hero-moon-grain)"/>
+        <path d="M31 54l7-11 14 3 5 11-9 9-14-2zM93 30l13-4 12 10-3 13-15 1-9-10zM93 97l14-8 15 9-1 15-12 9-16-9zM50 100l9-3 8 8-3 11-10 2-7-8z" fill="#abb49b" opacity=".38" stroke="#939c85" stroke-width="1.5"/>
+        <path d="M28 37c12-16 29-23 46-24" fill="none" stroke="#fffae0" stroke-width="3" stroke-linecap="round" opacity=".75"/>
+      </svg>
+      <div class="moonlit-haze" aria-hidden="true"></div>
+      <div class="hero-fireflies" aria-hidden="true"><i style="--x:63%;--y:39%"></i><i style="--x:88%;--y:55%"></i><i style="--x:59%;--y:72%"></i><i style="--x:94%;--y:77%"></i><i style="--x:73%;--y:23%"></i><i style="--x:48%;--y:83%"></i></div>
       <div class="hero-ground" aria-hidden="true"></div>
       <div class="hero-inner wrap">
         <div class="hero-paper">
           <p class="eyebrow"><svg class="little-spiral" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 32c-7-7-17 4-10 11 10 11 29 0 24-14-7-20-39-18-42 5-4 29 39 35 51 10"/></svg> An animated series in development</p>
           <h1 id="hero-heading">My Village <br><em>Shikha</em></h1><p class="hero-tagline">A forest full of stories.</p>
-          <p class="hero-premise">Maya, Mukunda and Pintu follow rhythms, patterns and little surprises through a forest where every connection matters.</p>
+          <div class="hero-introduction"><p class="hero-premise hero-premise-day">Maya, Mukunda and Pintu follow rhythms, patterns and little surprises through a forest where every connection matters.</p><p class="hero-premise hero-premise-night">By moonlight, Bhumi listens to the forest. Follow quiet paths, gentle signs and the small creatures waking beneath the trees.</p></div>
           <div class="hero-actions"><a class="button button-maroon" href="#characters">Meet the characters <span aria-hidden="true">↗</span></a><a class="text-link" href="#jhorle">Discover Jhorle <span aria-hidden="true">→</span></a></div>
           <div class="paper-foot"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 32c-7-7-17 4-10 11 10 11 29 0 24-14-7-20-39-18-42 5-4 29 39 35 51 10"/></svg><span>Wonder begins when we listen.</span></div>
         </div>
-        <div class="hero-cast" aria-label="Maya, Mukunda and their animal companion Pintu">
+        <div class="hero-cast" aria-label="Maya, Mukunda and their animal companion Pintu" data-day-label="Maya, Mukunda and their animal companion Pintu" data-night-label="Bhumi in the moonlit cardboard forest">
           <div class="hero-figure hero-figure-mukunda">
             <img class="hero-character hero-mukunda" src="./assets/magar-mukunda-cardboard-v2.png" alt="Mukunda with his madal" fetchpriority="high">
           </div>
@@ -96,7 +113,8 @@
           <div class="hero-figure hero-figure-pintu">
             <img class="hero-character hero-pintu" src="./assets/magar-pintu-cardboard-v2.png" alt="Pintu, their playful animal companion" fetchpriority="high">
           </div>
-          <span class="cast-caption">Three friends.<br>Many ways to listen.</span>
+          <div class="hero-figure hero-figure-bhumi"><img class="hero-character hero-bhumi" data-night-src="./assets/night-bhumi.png" width="1024" height="1536" alt="Bhumi with a leaf headdress and drum in the moonlit forest" decoding="async"></div>
+          <span class="cast-caption cast-caption-day">Three friends.<br>Many ways to listen.</span><span class="cast-caption cast-caption-night">After sunset,<br>the forest awakens.</span>
         </div>
       </div>
       <div class="hero-bush hero-bush-left" data-depth=".55" aria-hidden="true"><img src="./assets/cardboard-forest-bushes.png" alt="" decoding="async"></div>
@@ -109,7 +127,7 @@
         <div class="bush-layer bush-back-left" data-depth="-.3"><img src="./assets/cardboard-forest-bushes.png" alt="" loading="lazy" decoding="async"></div>
         <div class="bush-layer bush-back-right" data-depth=".25"><img src="./assets/cardboard-forest-bushes.png" alt="" loading="lazy" decoding="async"></div>
         <div class="burrow-shadow"></div>
-        <div class="peek-window"><img class="peek-animal" data-peek-animal src="./assets/woodland-mouse.png" alt="" loading="lazy" decoding="async"></div>
+        <div class="peek-window"><img class="peek-animal" data-peek-animal data-night-src="./assets/night-porcupine.png" src="./assets/woodland-mouse.png" alt="" loading="lazy" decoding="async"></div>
         <div class="burrow-rim"><img src="./assets/shikha-burrow-rim.svg" alt="" loading="lazy" decoding="async"></div>
         <div class="bush-layer bush-front-left" data-depth=".7"><img src="./assets/cardboard-forest-bushes.png" alt="" loading="lazy" decoding="async"></div>
         <div class="bush-layer bush-front-right" data-depth="-.8"><img src="./assets/cardboard-forest-bushes.png" alt="" loading="lazy" decoding="async"></div>
@@ -144,7 +162,7 @@
         <img class="crossing-bush crossing-bush-back crossing-bush-back-left" data-depth="-.3" src="./assets/cardboard-forest-bushes.png" alt="" loading="lazy" decoding="async">
         <img class="crossing-bush crossing-bush-back crossing-bush-back-right" data-depth="-.15" src="./assets/cardboard-forest-bushes.png" alt="" loading="lazy" decoding="async">
         <div class="crossing-path" data-depth=".12"></div>
-        <div class="crossing-traveler" data-crossing-animal>
+        <div class="crossing-traveler crossing-traveler-day" data-crossing-animal>
           <svg class="crossing-animal" viewBox="0 0 1536 1024" width="1536" height="1024" aria-hidden="true" focusable="false">
             <defs>
               <image id="crossing-panda-texture" href="./assets/cardboard-red-panda.png" width="1536" height="1024"/>
@@ -160,6 +178,31 @@
             <g class="crossing-leg crossing-leg-near-fore"><g clip-path="url(#crossing-near-fore-clip)"><use href="#crossing-panda-texture"/></g></g>
           </svg>
         </div>
+        <div class="crossing-traveler crossing-traveler-night" data-crossing-animal="">
+          <svg class="crossing-animal civet-puppet" viewBox="0 0 1774 887" width="1774" height="887" aria-hidden="true" focusable="false">
+            <defs>
+              <image id="civet-cardboard-texture" data-night-src="./assets/night-civet.png" width="1774" height="887"/>
+              <clipPath id="civet-far-hind-clip" clipPathUnits="userSpaceOnUse">
+                <path d="M777 543 L829 588 L811 657 L737 697 C766 704 790 724 795 753 C801 779 784 789 759 790 L710 788 C674 787 653 772 649 742 C643 714 650 694 665 672 L738 589 Z"/>
+              </clipPath>
+              <clipPath id="civet-far-fore-clip" clipPathUnits="userSpaceOnUse">
+                <path d="M1185 610 L1245 610 L1216 711 L1269 720 C1290 724 1308 743 1307 762 C1308 783 1290 798 1269 800 L1194 800 C1161 797 1139 784 1134 761 C1128 742 1133 724 1145 702 Z"/>
+              </clipPath>
+              <clipPath id="civet-near-hind-clip" clipPathUnits="userSpaceOnUse">
+                <path d="M847 453 C816 461 787 485 781 518 C775 551 787 591 800 635 L823 714 C831 751 841 784 866 798 C889 810 920 806 949 805 C981 807 1015 803 1030 785 C1044 769 1039 747 1022 732 C1000 712 964 707 930 716 L936 684 C948 634 954 587 947 544 C942 504 931 478 909 463 C890 450 866 446 847 453 Z"/>
+              </clipPath>
+              <clipPath id="civet-near-fore-clip" clipPathUnits="userSpaceOnUse">
+                <path d="M1244 467 C1214 478 1208 508 1219 547 C1226 579 1244 610 1272 636 L1356 706 C1392 735 1419 763 1451 783 C1481 802 1519 801 1557 795 C1590 794 1616 784 1626 763 C1639 737 1621 706 1595 691 C1575 679 1544 682 1514 694 L1457 642 L1416 594 L1393 546 C1380 510 1366 485 1330 473 C1300 461 1269 458 1244 467 Z"/>
+              </clipPath>
+            </defs>
+            <g class="crossing-leg civet-leg-far-hind"><g clip-path="url(#civet-far-hind-clip)"><use href="#civet-cardboard-texture"/></g></g>
+            <g class="crossing-leg civet-leg-far-fore"><g clip-path="url(#civet-far-fore-clip)"><use href="#civet-cardboard-texture"/></g></g>
+            <image class="crossing-body civet-body" data-night-src="./assets/night-civet-body.png" width="1774" height="887"/>
+            <g class="crossing-leg civet-leg-near-hind"><g clip-path="url(#civet-near-hind-clip)"><use href="#civet-cardboard-texture"/></g></g>
+            <g class="crossing-leg civet-leg-near-fore"><g clip-path="url(#civet-near-fore-clip)"><use href="#civet-cardboard-texture"/></g></g>
+          </svg>
+        </div>
+
         <img class="crossing-bush crossing-bush-front-left" data-depth=".6" src="./assets/cardboard-forest-bushes.png" alt="" loading="lazy" decoding="async">
         <img class="crossing-bush crossing-bush-front-right" data-depth=".8" src="./assets/cardboard-forest-bushes.png" alt="" loading="lazy" decoding="async">
         <div class="crossing-grass" data-depth=".6"></div>
@@ -181,6 +224,12 @@
     </section>
     <div class="waterfall-scene" id="waterfall" data-peek-scene role="img" aria-label="Side view of a cardboard waterfall with layered paper foam and water moving in parallax whenever you scroll up or down">
       <div class="waterfall-stage" aria-hidden="true">
+        <svg class="waterfall-moon" data-depth="-.12" viewBox="0 0 160 160" width="160" height="160" aria-hidden="true" focusable="false">
+        <defs><radialGradient id="waterfall-moon-face" cx="33%" cy="27%" r="80%"><stop stop-color="#fff4d2"/><stop offset="1" stop-color="#c8cbb3"/></radialGradient><pattern id="waterfall-moon-grain" width="9" height="6" patternUnits="userSpaceOnUse"><path d="M1 1h3m2 3h2M0 5h2" stroke="#7d8267" stroke-width=".55" opacity=".16"/></pattern></defs>
+        <circle cx="82" cy="83" r="66" fill="#726e51"/><circle cx="78" cy="78" r="66" fill="url(#waterfall-moon-face)" stroke="#d4c89e" stroke-width="2"/><circle cx="78" cy="78" r="65" fill="url(#waterfall-moon-grain)"/>
+        <path d="M31 54l7-11 14 3 5 11-9 9-14-2zM93 30l13-4 12 10-3 13-15 1-9-10zM93 97l14-8 15 9-1 15-12 9-16-9zM50 100l9-3 8 8-3 11-10 2-7-8z" fill="#abb49b" opacity=".38" stroke="#939c85" stroke-width="1.5"/>
+        <path d="M28 37c12-16 29-23 46-24" fill="none" stroke="#fffae0" stroke-width="3" stroke-linecap="round" opacity=".75"/>
+      </svg>
         <div class="waterfall-hills" data-depth="-.2"></div>
         <div class="waterfall-hills waterfall-hills-near" data-depth="-.5"></div>
         <p class="waterfall-paper">Follow the sound<br>of water.</p>
@@ -225,7 +274,7 @@
         
         <div class="peek-window"><svg class="peek-animal owl-puppet" data-peek-animal="" data-owl-puppet="" viewBox="0 0 1536 1024" width="1536" height="1024" aria-hidden="true" focusable="false">
   <defs>
-    <image id="owl-cardboard-texture" href="./assets/woodland-owl-overlay.png" width="1536" height="1024"/>
+    <image id="owl-cardboard-texture" data-night-src="./assets/night-owl.png" href="./assets/woodland-owl-overlay.png" width="1536" height="1024"/>
     <clipPath id="owl-left-wing-clip" clipPathUnits="userSpaceOnUse">
       <path d="M0 0H480V300L505 420L536 505L615 525L595 610L560 680L420 740H0Z"/>
     </clipPath>
@@ -239,6 +288,7 @@
   <g class="owl-wing owl-wing-left"><use href="#owl-cardboard-texture" clip-path="url(#owl-left-wing-clip)"/></g>
   <g class="owl-wing owl-wing-right"><use href="#owl-cardboard-texture" clip-path="url(#owl-right-wing-clip)"/></g>
   <use href="#owl-cardboard-texture" clip-path="url(#owl-body-clip)"/>
+  <g class="owl-night-glow" fill="#f9d58a" style="filter:drop-shadow(0 0 9px #e8b95d)"><ellipse cx="735" cy="392" rx="48" ry="59" fill="none" stroke="#efc46d" stroke-width="4" opacity=".65"/><ellipse cx="935" cy="365" rx="47" ry="58" fill="none" stroke="#efc46d" stroke-width="4" opacity=".65"/><ellipse cx="707" cy="360" rx="17" ry="23" opacity=".36"/><ellipse cx="908" cy="339" rx="17" ry="23" opacity=".36"/></g>
 </svg></div>
         
         <div class="bush-layer bush-front-left" data-depth=".7"><img src="./assets/cardboard-forest-bushes.png" alt="" loading="lazy" decoding="async"></div>

@@ -316,6 +316,13 @@
     }, 20000);
     await Promise.all(stylesheets.map(record => runResource(record.resource, token)));
     if (finished || token !== attempt) return;
+    // A saved night preference swaps native image sources after decoding its
+    // artwork. Discover the committed world, so day-source decode promises are
+    // never captured while that initial swap is still pending. The theme
+    // controller falls back to day on failure; a rejected optional promise must
+    // likewise leave the normal visual loading gate usable.
+    try { await window.shikhaThemeReady; } catch { /* Keep the current world. */ }
+    if (finished || token !== attempt) return;
     discoverArtwork();
     discoveryComplete = true;
     updateProgress();

@@ -1,0 +1,383 @@
+/* DAY / NIGHT STORYBOARD
+   0 ms: preserve the current view while the new cardboard artwork loads.
+   Ready: the palette and paper lighting settle together over 650 ms.
+   The moon, Bhumi and nocturnal visitors belong to the night composition.
+   Scrolling still controls every existing puppet and foam layer. */
+
+/* This small paper switch leaves the opposite corner for the music control. */
+.world-mode-control {
+  position: fixed;
+  z-index: 21;
+  left: 24px;
+  bottom: max(20px, env(safe-area-inset-bottom));
+  max-width: calc(100vw - 160px);
+  color: #29443f;
+}
+.world-mode-control[hidden] { display: none; }
+#world-mode-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 46px;
+  padding: 8px 12px 7px;
+  color: inherit;
+  background: var(--paper-grain), #f2e6c9;
+  border: 1px solid #ae8a58;
+  border-right: 3px solid #ad8652;
+  border-bottom: 5px solid #917047;
+  border-radius: 6px 4px 7px 3px;
+  box-shadow: 2px 4px 9px #12272b26;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+#world-mode-toggle:active { translate: 0 1px; }
+#world-mode-toggle .mode-night { display: none; }
+.mode-track {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 5px;
+  width: 49px;
+  height: 26px;
+  padding: 4px;
+  border-radius: 30px;
+  background: #c3cfbc;
+  border: 1px solid #839a80;
+  isolation: isolate;
+}
+.mode-track::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  width: 20px;
+  height: 20px;
+  left: 2px;
+  top: 2px;
+  border: 1px solid #bb9a5e;
+  border-radius: 50%;
+  background: var(--paper-grain), #f0ca77;
+  box-shadow: 1px 1px 0 #ad9056;
+}
+.mode-track svg { width: 15px; height: 15px; flex-shrink: 0; }
+#world-mode-status {
+  position: absolute;
+  left: 0;
+  bottom: calc(100% + 10px);
+  width: min(245px, calc(100vw - 36px));
+  margin: 0;
+  padding: 10px 13px;
+  background: var(--paper-grain), #f2e6c9;
+  color: #29443f;
+  border: 1px solid #a78a61;
+  border-bottom: 4px solid #917047;
+  border-radius: 4px;
+  box-shadow: 2px 4px 8px #15292c25;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.world-mode-control:not([data-state='loading']):not([data-state='error']) #world-mode-status {
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.world-mode-control[data-state='loading'] #world-mode-toggle { border-bottom-color: #a89655; }
+.world-mode-control[data-state='error'] #world-mode-status { border-bottom-color: #a34c42; }
+
+/* Both premises occupy one slot, so switching cannot move the page. */
+.hero-introduction { display: grid; }
+.hero-premise-day,
+.hero-premise-night { grid-area: 1 / 1; }
+.hero-premise-night,
+.hero-figure-bhumi,
+.cast-caption-night,
+.crossing-traveler-night { visibility: hidden; opacity: 0; pointer-events: none; }
+.hero-figure-bhumi {
+  z-index: 3;
+  width: 88%;
+  height: 478px;
+  left: 7%;
+  bottom: var(--cast-ground);
+}
+.hero-bhumi { width: 100%; height: 100%; object-fit: contain; object-position: center bottom; }
+
+.paper-moon,
+.waterfall-moon {
+  position: absolute;
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  filter: drop-shadow(4px 6px 0 #101e2d80) drop-shadow(0 0 20px #d7e5b922);
+}
+.paper-moon {
+  z-index: 2;
+  right: clamp(28px, 7vw, 145px);
+  top: 35px;
+  width: clamp(86px, 10vw, 140px);
+  height: auto;
+  rotate: -9deg;
+  transform: translate3d(0, var(--background-y, 0px), 0);
+}
+.waterfall-moon { z-index: 1; width: 93px; left: 66%; top: 25px; rotate: -13deg; }
+.moonlit-haze {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  opacity: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 78% 13%, #dce8c61a, transparent 44%), linear-gradient(0deg, #102a3540, transparent 45%);
+}
+.hero-fireflies { position: absolute; inset: 0; z-index: 2; opacity: 0; pointer-events: none; }
+.hero-fireflies i {
+  position: absolute;
+  left: var(--x, 70%);
+  top: var(--y, 65%);
+  width: 4px;
+  height: 4px;
+  border-radius: 45% 55% 50% 40%;
+  background: #e1eeb3;
+  box-shadow: 0 0 5px #d5ef9a, 0 0 11px #9dd6738c;
+}
+.owl-night-glow { opacity: 0; visibility: hidden; pointer-events: none; }
+
+/* Indigo paper and silver-green scenery, with warm windows and invitations. */
+html[data-theme='night'] {
+  color-scheme: dark;
+  --cream: #142530;
+  --paper: #263c47;
+  --ink: #eee9d7;
+  --forest: #123034;
+  --forest-deep: #0d1d29;
+  --maroon: #e4b69a;
+  --mustard: #e5cc8b;
+  --olive: #a6bfa8;
+  --line: #c2d0c02e;
+  --kraft-light: #ad9970;
+  --kraft: #8f7957;
+  --kraft-dark: #5a5140;
+  --flutes: repeating-linear-gradient(90deg, #6c624c 0 2px, #af9e74 2px 4px, #4d483b 4px 5px, #897b5d 5px 8px);
+}
+html[data-theme='night'] body { background-color: #142530; }
+html[data-theme='night'] .world-mode-control { color: #eee9d7; }
+html[data-theme='night'] #world-mode-toggle {
+  background: var(--paper-grain), #293f4d;
+  border-color: #80918a;
+  border-right-color: #526b71;
+  border-bottom-color: #465b60;
+}
+html[data-theme='night'] #world-mode-toggle .mode-day { display: none; }
+html[data-theme='night'] #world-mode-toggle .mode-night { display: inline; }
+html[data-theme='night'] .mode-track { background: #152c3b; border-color: #7d9690; }
+html[data-theme='night'] .mode-track::before { left: 25px; background: var(--paper-grain), #e3e5ca; border-color: #b1bea7; box-shadow: 1px 1px 0 #798d7f; }
+html[data-theme='night'] .site-header { background-color: #172d39; }
+html[data-theme='night'] .site-header nav a { color: #ece6d3; text-shadow: none; }
+html[data-theme='night'] .site-header nav a::before { background-color: #304b52; border-color: #779087; }
+html[data-theme='night'] .site-header nav a[aria-current='page']::before { background-color: #405d5a; }
+html[data-theme='night'] .site-header nav a[aria-current='page'] { color: #f5d89c; }
+html[data-theme='night'] .section-copy p:not(.eyebrow):not(.lead):not(.spiral-status) { color: #c4d0c9; }
+
+/* The pale invitation stays a tactile piece of paper against the dark forest. */
+html[data-theme='night'] .hero { background-color: #152f38; }
+html[data-theme='night'] .hero-forest::after { background: linear-gradient(0deg, #0f263a66, transparent 45%); }
+html[data-theme='night'] .hero-ground { opacity: 0; }
+html[data-theme='night'] .hero-paper { color: #294240; filter: drop-shadow(5px 9px 4px #071b2e55); }
+html[data-theme='night'] .hero-paper::before { background-color: #e5e2cd; }
+html[data-theme='night'] .hero h1 em,
+html[data-theme='night'] .hero-tagline,
+html[data-theme='night'] .hero-paper .little-spiral,
+html[data-theme='night'] .paper-foot svg { color: #804b42; stroke: #804b42; }
+html[data-theme='night'] .hero-paper .text-link { color: #334b43; }
+html[data-theme='night'] .hero-paper .paper-foot { border-color: #6c775845; }
+html[data-theme='night'] .hero-paper .button-maroon { background-color: #70463f; color: #f1ead6; }
+html[data-theme='night'] .hero-scroll { color: #e9e6d0; text-shadow: 0 1px 3px #061828a1; }
+html[data-theme='night'] .hero-figure-maya,
+html[data-theme='night'] .hero-figure-mukunda,
+html[data-theme='night'] .hero-figure-pintu,
+html[data-theme='night'] .hero-premise-day,
+html[data-theme='night'] .cast-caption-day,
+html[data-theme='night'] .crossing-traveler-day { visibility: hidden; opacity: 0; pointer-events: none; }
+html[data-theme='night'] .hero-figure-bhumi,
+html[data-theme='night'] .hero-premise-night,
+html[data-theme='night'] .cast-caption-night,
+html[data-theme='night'] .crossing-traveler-night { visibility: visible; opacity: 1; }
+html[data-theme='night'] .hero-bhumi { filter: brightness(.93) saturate(.88); }
+html[data-theme='night'] .hero-figure-bhumi::before { background: radial-gradient(ellipse, #07192775, #07192726 43%, transparent 72%); }
+html[data-theme='night'] .hero-figure-bhumi::after { background: radial-gradient(ellipse, #051925a3, #07192745 45%, transparent 75%); }
+html[data-theme='night'] .cast-caption-night { top: 175px; right: -8px; background-color: #d9dfbb; color: #28443d; rotate: -2deg; }
+html[data-theme='night'] .paper-moon,
+html[data-theme='night'] .waterfall-moon,
+html[data-theme='night'] .owl-night-glow { visibility: visible; opacity: 1; }
+html[data-theme='night'] .moonlit-haze,
+html[data-theme='night'] .hero-fireflies { opacity: 1; }
+html[data-theme='night'] .hero-bush img,
+html[data-theme='night'] .bush-layer img,
+html[data-theme='night'] .crossing-bush,
+html[data-theme='night'] .waterfall-bush img { filter: brightness(.65) saturate(.72) hue-rotate(13deg) drop-shadow(2px 4px 2px #071b2d45); }
+
+/* The burrow's lower edge conceals the porcupine's feet and paper backing. */
+html[data-theme='night'] #mouse-glimpse .peek-window { width: 250px; height: 205px; }
+html[data-theme='night'] #mouse-glimpse .peek-animal { width: 240px; bottom: -24px; }
+html[data-theme='night'] .burrow-shadow { background: #08151a; box-shadow: inset 0 7px 12px #030c12; }
+html[data-theme='night'] .burrow-rim { filter: brightness(.62) saturate(.67); }
+html[data-theme='night'] .scenery-floor { background-color: #334d4f; }
+html[data-theme='night'] .woodland-scene-owl .scenery-floor { background-color: #304b4c; }
+html[data-theme='night'] .woodland-scene-fox { background-color: #123034; }
+html[data-theme='night'] .woodland-scene-fox .scenery-floor { background-color: #142530; }
+html[data-theme='night'] .woodland-scene-fox .peek-animal { filter: brightness(.84) saturate(.8) drop-shadow(2px 3px 1px #06182855); }
+
+html[data-theme='night'] .forest-crossing { background-color: #182f3b; }
+html[data-theme='night'] .crossing-ridge { background-color: #345859; }
+html[data-theme='night'] .crossing-ridge::after { background-color: #284748; }
+html[data-theme='night'] .crossing-path { background-color: #687568; }
+html[data-theme='night'] .crossing-path::before { background-color: #829082; }
+html[data-theme='night'] .crossing-grass { background-color: #2a4b43; }
+html[data-theme='night'] .crossing-traveler-night { width: clamp(260px, 30vw, 355px); bottom: 82px; }
+html[data-theme='night'] .crossing-traveler-night::before { left: 28%; right: 8%; bottom: 14px; background-color: #071b2d65; }
+html[data-theme='night'] .crossing-traveler-night .crossing-animal { filter: brightness(.88) saturate(.78) drop-shadow(2px 4px 1px #06182855); }
+
+/* Water remains layered and moving; only its lighting changes. */
+html[data-theme='night'] .waterfall-scene { background-color: #172e3c; }
+html[data-theme='night'] .waterfall-hills { background-color: #32545b; }
+html[data-theme='night'] .waterfall-hills-near { background-color: #25434a; }
+html[data-theme='night'] .waterfall-model > img { filter: brightness(.69) saturate(.57) hue-rotate(16deg); }
+html[data-theme='night'] .waterfall-model { filter: drop-shadow(1px 12px 7px #06182855); }
+html[data-theme='night'] .waterfall-foam img { filter: brightness(.93) saturate(.35) drop-shadow(0 0 3px #abcfd344); }
+html[data-theme='night'] .waterfall-foam { filter: drop-shadow(0 2px 1px #071b2d66); }
+html[data-theme='night'] .water-paper-strips { fill: #d4e8e2; opacity: .72; }
+html[data-theme='night'] .waterfall-paper { color: #e9e5cf; background-color: #304a52; }
+
+/* Keep the light stationery locally legible instead of inverting all artwork. */
+html[data-theme='night'] .world-notebook { background-color: #d8d8bd; color: #2b4642; box-shadow: 4px 5px 0 #b2ae8c, 6px 8px 0 #687761, 9px 12px 18px #071b2d40; }
+html[data-theme='night'] .notebook-caption,
+html[data-theme='night'] .notebook-header svg { color: #6f4e40; stroke: #6f4e40; }
+html[data-theme='night'] .forest-notes circle,
+html[data-theme='night'] .forest-notes text { fill: #765040; }
+html[data-theme='night'] .characters,
+html[data-theme='night'] .about-content { background-color: #1b333d; }
+html[data-theme='night'] .cast-card,
+html[data-theme='night'] .pilot-photo,
+html[data-theme='night'] dialog { border-top-color: #75887960; border-left-color: #75887960; box-shadow: 2px 4px 0 #071b2d40, 5px 9px 11px #071b2d30; }
+html[data-theme='night'] .cast-portrait { background-color: color-mix(in srgb, var(--card-color) 51%, #233e40); border-color: #b9c9ad5c; }
+html[data-theme='night'] .cast-copy > p:not(.character-role) { color: #c7d3ca; }
+html[data-theme='night'] .cast-portrait img { filter: brightness(.9) saturate(.84) drop-shadow(4px 5px 3px #071b2d44); }
+html[data-theme='night'] .character-role { color: #dfc5a6; }
+html[data-theme='night'] .connection { background-color: #113034; color: #eee9d7; }
+html[data-theme='night'] .connection .section-copy p:not(.eyebrow):not(.lead):not(.spiral-status) { color: #c8d6cb; }
+html[data-theme='night'] .spiral-paper { color: #28423b; --drawing-ink: #765040; }
+html[data-theme='night'] .spiral-paper[data-state='success'] { --drawing-ink: #24763d; }
+html[data-theme='night'] .spiral-paper[data-state='incomplete'] { --drawing-ink: #a03a35; }
+html[data-theme='night'] #spiral-cursor { fill: #f2ead1; }
+html[data-theme='night'] .connection .spiral-story-note { color: #bbcec0!important; }
+html[data-theme='night'] .journal-page { color: #35483c; }
+html[data-theme='night'] .journal-page svg,
+html[data-theme='night'] .journal-page > span:not(.journal-page-number) { color: #765040; stroke: #765040; }
+html[data-theme='night'] .development-label { background-color: #e4b69a0f; border-color: #e4b69a40; }
+html[data-theme='night'] .values { background-color: #29403e; }
+html[data-theme='night'] .village-location { background-color: #213a40; border-color: #9cad9250; }
+html[data-theme='night'] .location-map { background-color: #e0dfc9; color: #2b4542; }
+html[data-theme='night'] .location-map figcaption { color: #3a554e; border-color: #69786145; }
+html[data-theme='night'] .location-map figcaption strong { color: #29423e; }
+html[data-theme='night'] .about-visual { color: #2d4741; background-color: #d5d6bc; }
+html[data-theme='night'] .about-visual img { filter: brightness(.78) saturate(.65); }
+html[data-theme='night'] .pilot-photo > img { filter: brightness(.81) saturate(.68); }
+html[data-theme='night'] .button-maroon { background-color: #c4a17f; color: #1c3437; text-shadow: none; }
+html[data-theme='night'] .button-mustard { color: #1d3434; }
+html[data-theme='night'] .music-toggle { color: #e9e5cf; border-color: #80918a; border-bottom-color: #465b60; }
+html[data-theme='night'] .site-footer { color: #eee9d7; }
+html[data-theme='night'] .site-footer p small,
+html[data-theme='night'] .site-footer .copyright { color: #b8c9c5; }
+html[data-theme='night'] .site-footer nav { color: #d4ddd3; }
+html[data-theme='night'] dialog::backdrop { background-color: #071522e6; }
+html[data-theme='night'] #close-dialog { color: #eceddb; background-color: #3c5759; border-color: #829481; border-bottom-color: #526f6b; }
+html[data-theme='night'] #dialog-body .story-note { color: #bacdc4; }
+
+/* No independent loops: the scene rests when the visitor stops scrolling. */
+html.theme-changing body,
+html.theme-changing .site-header,
+html.theme-changing .site-header nav a,
+html.theme-changing .site-header nav a::before,
+html.theme-changing .hero-forest,
+html.theme-changing .hero-paper::before,
+html.theme-changing .woodland-scene,
+html.theme-changing .scenery-floor,
+html.theme-changing .forest-crossing,
+html.theme-changing .crossing-ridge,
+html.theme-changing .crossing-path,
+html.theme-changing .crossing-grass,
+html.theme-changing .waterfall-scene,
+html.theme-changing .waterfall-hills,
+html.theme-changing .characters,
+html.theme-changing .connection,
+html.theme-changing .village-location,
+html.theme-changing .values,
+html.theme-changing .about-content,
+html.theme-changing .cast-card,
+html.theme-changing .waterfall-paper,
+html.theme-changing .music-toggle,
+html.theme-changing #world-mode-toggle {
+  transition: background-color 650ms ease, color 650ms ease, border-color 650ms ease;
+}
+html.theme-changing .hero-figure,
+html.theme-changing .hero-premise,
+html.theme-changing .cast-caption,
+html.theme-changing .paper-moon,
+html.theme-changing .waterfall-moon,
+html.theme-changing .moonlit-haze,
+html.theme-changing .hero-fireflies,
+html.theme-changing .owl-night-glow,
+html.theme-changing .hero-ground { transition: opacity 650ms ease; }
+html.theme-changing .bush-layer img,
+html.theme-changing .hero-bush img,
+html.theme-changing .waterfall-bush img,
+html.theme-changing .crossing-bush,
+html.theme-changing .waterfall-model > img,
+html.theme-changing .waterfall-foam img,
+html.theme-changing .cast-portrait img { transition: filter 650ms ease; }
+html.theme-changing .mode-track::before { transition: left 300ms ease, background-color 300ms ease; }
+
+@media (min-width: 1600px) {
+  .hero-figure-bhumi { height: 510px; }
+}
+@media (max-width: 1100px) {
+  .hero-figure-bhumi { height: 428px; width: 98%; left: 1%; }
+  html[data-theme='night'] .cast-caption-night { top: 158px; font-size: 13px; }
+}
+@media (min-width: 760px) and (max-width: 850px) {
+  .hero-figure-bhumi { height: 365px; width: 110%; left: -5%; }
+  html[data-theme='night'] .cast-caption-night { top: 155px; right: 0; }
+  .paper-moon { right: 46px; top: 33px; width: 94px; }
+}
+@media (max-width: 759px) {
+  .paper-moon { top: auto; bottom: 365px; right: auto; left: 24px; width: 70px; z-index: 4; }
+  .hero-figure-bhumi { height: 340px; width: 83%; left: 8.5%; }
+  html[data-theme='night'] .cast-caption-night { display: none; }
+}
+@media (max-width: 639px) {
+  .world-mode-control { left: 12px; bottom: max(12px, env(safe-area-inset-bottom)); max-width: calc(100vw - 145px); }
+  #world-mode-toggle { gap: 6px; padding-inline: 9px; font-size: 11px; }
+  .mode-track { width: 45px; }
+  html[data-theme='night'] .mode-track::before { left: 21px; }
+  .hero-figure-bhumi { height: 325px; width: 85%; left: 7.5%; }
+  .paper-moon { width: 62px; left: 20px; bottom: 365px; }
+  .waterfall-moon { top: 5px; left: 7%; width: 52px; }
+  html[data-theme='night'] #mouse-glimpse .peek-window { width: 205px; height: 175px; }
+  html[data-theme='night'] #mouse-glimpse .peek-animal { width: 200px; bottom: -18px; }
+  html[data-theme='night'] .crossing-traveler-night { width: 228px; bottom: 84px; }
+  html[data-theme='night'] .crossing-traveler-night::before { bottom: 8px; }
+}
+@media (max-width: 359px) {
+  .hero-figure-bhumi { height: 288px; width: 88%; left: 6%; }
+  .paper-moon { width: 58px; left: 16px; bottom: 325px; }
+  #world-mode-toggle { padding-inline: 8px; gap: 5px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html.theme-changing *,
+  html.theme-changing *::before,
+  html.theme-changing *::after { transition: none!important; animation: none!important; }
+}

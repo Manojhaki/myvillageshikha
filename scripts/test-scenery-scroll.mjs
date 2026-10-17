@@ -10,6 +10,7 @@ const siteRoot = new URL(existsSync(new URL('../dist/scenery-scroll.js', import.
 const source = await readFile(new URL('scenery-scroll.js', siteRoot), 'utf8');
 const markup = await readFile(new URL('index.html', siteRoot), 'utf8');
 const crossingStyles = await readFile(new URL('forest-crossing.css', siteRoot), 'utf8');
+const civetStyles = await readFile(new URL('night-civet.css', siteRoot), 'utf8');
 const foamTags = [...markup.matchAll(/<div\b[^>]*\bdata-waterfall-foam\b[^>]*>/g)].map(match => match[0]);
 const cubTags = [...markup.matchAll(/<[a-z][^>]*\bdata-fox-cub\b[^>]*>/g)].map(match => match[0]);
 const attribute = (tag, name) => tag.match(new RegExp(`\\b${name}="([^"]*)"`))?.[1];
@@ -44,7 +45,7 @@ class Element {
   }
 }
 
-function harness({ width = 1440, height = 900, stageWidth = width - 48, travelerWidth = 190, reduced = false } = {}) {
+function harness({ width = 1440, height = 900, stageWidth = width - 48, travelerWidth = 190, travelerWidths, reduced = false } = {}) {
   const root = new Element('root');
   const document = new Element('document');
   document.hidden = false;
@@ -58,8 +59,12 @@ function harness({ width = 1440, height = 900, stageWidth = width - 48, traveler
   const scene = new Element('scene');
   const stage = new Element('crossing stage');
   stage.clientWidth = stageWidth;
-  const traveler = new Element('crossing animal');
-  traveler.offsetWidth = travelerWidth;
+  const travelers = (travelerWidths || [travelerWidth]).map((renderedWidth, index) => {
+    const element = new Element(`crossing animal ${index + 1}`);
+    element.offsetWidth = renderedWidth;
+    return element;
+  });
+  const traveler = travelers[0];
   const animal = new Element('peeking animal');
   const owl = new Element('owl puppet');
   const cubs = cubTags.map((tag, index) => new Element(`fox cub ${index + 1}`, { peekOffset: attribute(tag, 'data-peek-offset') }));
@@ -79,7 +84,7 @@ function harness({ width = 1440, height = 900, stageWidth = width - 48, traveler
   scene.querySelectorAll = selector => ({
     '[data-peek-animal]': [animal, owl, ...cubs],
     '[data-owl-puppet]': [owl],
-    '[data-crossing-animal]': [traveler],
+    '[data-crossing-animal]': travelers,
     '[data-waterfall-foam]': foam,
     '[data-water-flow]': [water],
     '[data-depth]': [layer],
@@ -100,7 +105,7 @@ function harness({ width = 1440, height = 900, stageWidth = width - 48, traveler
     for (const [id, callback] of pending) { frames.delete(id); callback(); }
   }
   function at(nextProgress) { progress = nextProgress; window.dispatch('scroll'); flush(); }
-  return { root, document, window, media, scene, stage, traveler, animal, owl, cubs, layer, water, foam, background, frames, flush, at };
+  return { root, document, window, media, scene, stage, traveler, travelers, animal, owl, cubs, layer, water, foam, background, frames, flush, at };
 }
 
 let passed = 0;
@@ -256,7 +261,8 @@ test('resizing recalculates sideways travel from the new stage and character wid
 });
 
 test('four separately clipped cardboard legs surround the body in a believable depth order', () => {
-  const legGroups = [...markup.matchAll(/<g\b[^>]*class="([^"]*\bcrossing-leg\b[^"]*)"[^>]*>([\s\S]*?)<\/g>/g)];
+  const legGroups = [...markup.matchAll(/<g\b[^>]*class="([^"]*\bcrossing-leg\b[^"]*)"[^>]*>([\s\S]*?)<\/g>/g)]
+    .filter(match => match[1].split(/\s+/).some(name => /^crossing-leg-(?:far|near)-/.test(name)));
   assert.equal(legGroups.length, 4, 'the panda has four separately moving leg groups');
   const clipIds = new Set([...markup.matchAll(/<clipPath\b[^>]*\bid="([^"]+)"/g)].map(match => match[1]));
   const legNames = ['far-hind', 'far-fore', 'near-hind', 'near-fore'];
@@ -272,6 +278,75 @@ test('four separately clipped cardboard legs surround the body in a believable d
     assert.ok(clipIds.has(clip), `the ${name} leg uses a defined cardboard clipping path`);
     assert.match(group[2], /<use\b[^>]*href="#[^"]+"/, `the ${name} leg reuses the original textured artwork`);
     assert.ok(name.startsWith('far-') ? group.index < body.index : group.index > body.index, `the ${name} leg is on the correct side of the body`);
+  }
+});
+
+test('the night civet has four deferred textured paper legs around its dedicated body', () => {
+  const rig = markup.match(/<svg\b(?=[^>]*\bclass="[^"]*\bcivet-puppet\b)[^>]*>[\s\S]*?<\/svg>/)?.[0];
+  assert.ok(rig, 'night mode includes its own civet puppet');
+  assert.match(rig, /viewBox="0 0 1774 887"/, 'the original artwork and body share the registered canvas');
+  const legGroups = [...rig.matchAll(/<g\b[^>]*class="([^"]*\bcrossing-leg\b[^"]*)"[^>]*>([\s\S]*?)<\/g>/g)];
+  assert.equal(legGroups.length, 4, 'the civet has four separately moving paper legs');
+  const definitions = [...rig.matchAll(/\bid="([^"]+)"/g)].map(match => match[1]);
+  assert.equal(new Set(definitions).size, definitions.length, 'the civet has no duplicate definition IDs');
+  definitions.forEach(id => assert.ok(id.startsWith('civet-'), 'civet definitions cannot collide with the daytime panda'));
+  const clipIds = new Set([...rig.matchAll(/<clipPath\b[^>]*\bid="([^"]+)"/g)].map(match => match[1]));
+  const texture = rig.match(/<image\b[^>]*\bid="civet-cardboard-texture"[^>]*>/)?.[0];
+  const body = rig.match(/<image\b[^>]*\bclass="[^"]*\bcivet-body\b[^"]*"[^>]*>/);
+  assert.ok(texture && body, 'the original civet texture and leg-free body remain separate image layers');
+  assert.equal(attribute(texture, 'data-night-src'), './assets/night-civet.png');
+  assert.equal(attribute(body[0], 'data-night-src'), './assets/night-civet-body.png');
+  for (const image of [texture, body[0]]) {
+    assert.ok(!/\s(?:href|xlink:href)="[^\"]+"/.test(image), 'night textures do not download through an active daytime href');
+    assert.equal(attribute(image, 'width'), '1774');
+    assert.equal(attribute(image, 'height'), '887');
+  }
+  const rules = [...civetStyles.replace(/\/\*[\s\S]*?\*\//g, '').matchAll(/([^{}]+)\{([^{}]*)\}/g)];
+  for (const [pair, names] of [['a', ['far-hind', 'near-fore']], ['b', ['far-fore', 'near-hind']]]) {
+    for (const name of names) {
+      const group = legGroups.find(match => match[1].split(/\s+/).includes(`civet-leg-${name}`));
+      assert.ok(group, `the civet ${name} leg is present`);
+      const clip = group[2].match(/clip-path="url\(#([^)]*)\)"/)?.[1];
+      assert.ok(clipIds.has(clip), `the civet ${name} leg uses a defined clipping path`);
+      assert.match(group[2], /<use\b[^>]*href="#civet-cardboard-texture"/, 'each clipped leg preserves the original cardboard grain');
+      assert.ok(name.startsWith('far-') ? group.index < body.index : group.index > body.index, `the civet ${name} leg has the correct depth`);
+      const rule = rules.find(match => match[1].trim().split(/\s*,\s*/).includes(`.civet-puppet .civet-leg-${name}`))?.[2];
+      assert.ok(rule?.includes(`var(--gait-${pair}-angle, 0deg)`) && rule.includes(`var(--gait-${pair}-lift, 0px)`), `the civet ${name} leg uses the correct diagonal gait`);
+    }
+  }
+});
+
+test('day and night travelers use their own measured width and recover when switching which is visible', () => {
+  for (const [width, stageWidth, pandaWidth, civetWidth] of [[390, 358, 178, 246], [1440, 1240, 270, 350]]) {
+    const h = harness({ width, stageWidth, travelerWidths: [pandaWidth, civetWidth] });
+    const properties = ['--crossing-x', '--crossing-y', '--crossing-tilt', ...gaitProperties];
+    const snapshot = () => h.travelers.map(animal => properties.map(property => animal.value(property)));
+    h.at(.41);
+    const forward = snapshot();
+    assert.notEqual(forward[0][0], forward[1][0], 'differently sized animals follow independently measured travel bounds');
+    assert.notDeepEqual(forward[0].slice(3), forward[1].slice(3), 'each animal takes steps according to its own rendered stride length');
+    h.at(.72);
+    h.at(.41);
+    assert.deepEqual(snapshot(), forward, 'both animals reverse to the same exact positions and walking poses');
+    h.travelers[0].offsetWidth = 0;
+    h.window.dispatch('resize');
+    h.flush();
+    assert.deepEqual(gaitProperties.map(property => h.travelers[0].value(property)), [0, 0, 0, 0], 'the hidden daytime animal rests rather than using a zero-width stride');
+    assert.deepEqual(snapshot()[1], forward[1], 'hiding the panda does not change the civet gait');
+    h.travelers[0].offsetWidth = pandaWidth;
+    h.travelers[1].offsetWidth = 0;
+    h.window.dispatch('resize');
+    h.flush();
+    assert.deepEqual(snapshot()[0], forward[0], 'showing the panda restores its pose at the current scroll position');
+    assert.deepEqual(gaitProperties.map(property => h.travelers[1].value(property)), [0, 0, 0, 0], 'the hidden civet also rests safely');
+    h.travelers[1].offsetWidth = civetWidth;
+    h.window.dispatch('resize');
+    h.flush();
+    assert.deepEqual(snapshot(), forward, 'switching back remeasures both travelers without a position jump');
+    h.media.matches = true;
+    h.media.dispatch('change');
+    h.flush();
+    h.travelers.forEach(animal => properties.forEach(property => assert.equal(animal.value(property), 0, 'reduced motion centers and rests both rigs')));
   }
 });
 

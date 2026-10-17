@@ -1,0 +1,19 @@
+/* The civet shares the crossing's scroll position and diagonal-pair gait.
+   Each paper leg keeps its original texture; the registered body hides
+   the two far joints while the near brass joints remain visible. */
+.civet-puppet .civet-leg-far-hind,
+.civet-puppet .civet-leg-near-fore {
+  --leg-angle: var(--gait-a-angle, 0deg);
+  --leg-lift: var(--gait-a-lift, 0px);
+}
+
+.civet-puppet .civet-leg-far-fore,
+.civet-puppet .civet-leg-near-hind {
+  --leg-angle: var(--gait-b-angle, 0deg);
+  --leg-lift: var(--gait-b-lift, 0px);
+}
+
+.civet-puppet .civet-leg-far-hind { transform-origin: 799px 579px; }
+.civet-puppet .civet-leg-far-fore { transform-origin: 1210px 614px; }
+.civet-puppet .civet-leg-near-hind { transform-origin: 878px 484px; }
+.civet-puppet .civet-leg-near-fore { transform-origin: 1260px 511px; }

@@ -37,10 +37,13 @@
   <script>document.documentElement.classList.add('site-loading');</script>
   <link rel="stylesheet" href="../style.css">
   <link rel="stylesheet" href="../mobile.css">
+  <script src="../night-mode.js" defer></script>
   <script src="../site-loader.js" defer onerror="document.documentElement.classList.remove('site-loading')"></script>
   <script src="../app.js" defer></script>
   <link rel="stylesheet" href="../music.css">
   <script src="../music.js" defer></script>
+  <link rel="stylesheet" href="../night-civet.css">
+  <link rel="stylesheet" href="../night-mode.css">
 </head>
 <body>
   <div id="site-loader" role="status" aria-live="polite">
@@ -62,8 +65,14 @@
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m11 5-6 4H2v6h3l6 4Z"/><path class="music-waves" d="M15 8c2 2 2 6 0 8m3-11c4 4 4 10 0 14"/><path class="music-muted" d="m16 9 5 6m0-6-5 6"/></svg>
     <span id="music-label">Play music</span>
   </button>
+  <div class="world-mode-control" hidden>
+    <button id="world-mode-toggle" type="button" role="switch" aria-checked="false" aria-label="Night mode" title="Explore the village at night">
+      <span class="mode-day">Day</span><span class="mode-track" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4" fill="currentColor"/><path d="M12 1v3m0 16v3M1 12h3m16 0h3M4 4l2 2m12 12 2 2M4 20l2-2M18 6l2-2" stroke="currentColor" stroke-width="1.8"/></svg><svg viewBox="0 0 24 24"><path d="M19 15a8 8 0 0 1-10-10 8 8 0 1 0 10 10Z" fill="currentColor"/></svg></span><span class="mode-night">Night</span>
+    </button>
+    <p id="world-mode-status" role="status" aria-live="polite"></p>
+  </div>
   <main id="main">
-    <section class="about-hero wrap" aria-labelledby="about-heading"><div><p class="eyebrow">About the series</p><h1 id="about-heading">Every story begins<br>by <em>listening.</em></h1><p class="lead">My Village Shikha is a developing series about curiosity, memory and our relationship with the forest.</p><div class="development-label"><span aria-hidden="true"></span> A working series concept</div></div><div class="about-visual"><img src="../assets/magar-forest-cohesive.png" alt="A handmade cardboard forest with layered trees and a winding path"><p>A forest full of stories.</p><span class="tape tape-one" aria-hidden="true"></span></div></section>
+    <section class="about-hero wrap" aria-labelledby="about-heading"><div><p class="eyebrow">About the series</p><h1 id="about-heading">Every story begins<br>by <em>listening.</em></h1><p class="lead">My Village Shikha is a developing series about curiosity, memory and our relationship with the forest.</p><div class="development-label"><span aria-hidden="true"></span> A working series concept</div></div><div class="about-visual"><img data-night-src="../assets/night-forest.png" src="../assets/magar-forest-cohesive.png" alt="A handmade cardboard forest with layered trees and a winding path"><p>A forest full of stories.</p><span class="tape tape-one" aria-hidden="true"></span></div></section>
     <section class="about-content section" aria-label="The story concept"><div class="wrap">
       <article class="about-row"><h2><span>01 / The heart of the story</span>Connection asks<br>for care.</h2><div><p>Maya, Mukunda and Pintu meet mysteries through observation, rhythm and instinct. Their adventures grow from relationships: between children and elders, between stories and places, and between the community and the forest.</p><p>A complete spiral represents connection and balance. An interrupted spiral signals that a relationship has been overlooked. Understanding it takes attention, remembered history and care.</p></div></article>
       <article class="about-row"><h2><span>02 / How discoveries happen</span>Clues that leave<br>room to learn.</h2><div><p>Mukunda’s madal teaches him to listen. Maya’s Spiral Journal holds songs, stories and drawings so she can notice patterns. Pintu finds clues instinctively, bringing comedy without spoken explanations.</p><p>Aama shares human memories, stories, old songs and place names. She helps the children understand missing histories without solving their mysteries for them.</p></div></article>

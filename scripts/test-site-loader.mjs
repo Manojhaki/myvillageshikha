@@ -141,7 +141,7 @@ class Element extends Events {
   focus() { this.focused = true; }
 }
 
-function harness({ stylesheetPending = false, bootClass = true, readyState = 'loading', reducedMotion = false } = {}) {
+function harness({ stylesheetPending = false, bootClass = true, readyState = 'loading', reducedMotion = false, themePending = false } = {}) {
   const document = new Events();
   const window = new Events();
   const root = new Element('html');
@@ -270,6 +270,8 @@ function harness({ stylesheetPending = false, bootClass = true, readyState = 'lo
   window.clearTimeout = id => timers.delete(id);
   window.getComputedStyle = computedStyle;
   window.matchMedia = () => ({ matches: reducedMotion, addEventListener() {} });
+  const themeReady = deferred();
+  if (themePending) window.shikhaThemeReady = themeReady.promise;
   const errors = [];
   const context = vm.createContext({ document, window, Image: window.Image, MutationObserver,
     URL, Promise, Map, Set, WeakMap, Error, AggregateError, Array, Number, String, Object, Math,
@@ -321,7 +323,7 @@ function harness({ stylesheetPending = false, bootClass = true, readyState = 'lo
   async function windowLoaded() { document.readyState = 'complete'; window.emit('load'); await settle(); }
   async function sheetLoaded() { stylesheet.sheet = markerSheet; stylesheet.emit('load'); await settle(); }
   const active = () => root.classList.contains('site-loading');
-  return { root, body, main, header, alreadyInert, overlay, elements, document, window, lazy,
+  return { root, body, main, header, alreadyInert, overlay, elements, document, window, lazy, svgImage, background, themeReady,
     stylesheet, resources, preloads, fontLoads, fontsReady, errors, mutations, timers, frames,
     settle, frame, advance, loaded, decoded, failed, allVisuals, domLoaded, windowLoaded, sheetLoaded, active,
     get eagerWrites() { return eagerWrites; },
@@ -401,6 +403,72 @@ await test('a missed stylesheet error offers recovery without waiting for media 
   assert.equal(h.active(), true, 'failed styles must not expose an unfinished page');
   assert.equal(h.elements['site-loader-actions'].hidden, false);
   assert.equal(h.elements['site-loader-retry'].hidden, false, 'a stylesheet error missed before controller startup is recoverable');
+});
+
+await test('saved-night readiness delays artwork discovery and captures the final night sources', async () => {
+  const h = harness({ themePending: true });
+  await h.domLoaded();
+  await h.allVisuals();
+  await h.frame();
+  await h.frame();
+  assert.equal(h.active(), true, 'the saved world has not committed yet');
+  assert.equal(h.preloads.length, 0, 'no day SVG or computed CSS artwork is captured while the theme is pending');
+  assert.equal(h.lazy.decodeCalls, 0, 'no native decoder captures a source that the theme will change');
+  h.lazy.src = './assets/night-porcupine.png';
+  h.svgImage.setAttribute('href', './assets/night-civet.png');
+  h.background.computed.backgroundImage = 'url("https://shikha.example/myvillageshikha/assets/night-forest.png")';
+  h.background.before = {};
+  h.root.setAttribute('data-theme', 'night');
+  h.themeReady.resolve();
+  await h.settle();
+  for (const suffix of ['night-porcupine.png', 'night-civet.png', 'night-forest.png']) {
+    assert.ok(h.preloads.some(image => image.src.endsWith(suffix)), `${suffix} belongs to the final world readiness gate`);
+  }
+  for (const suffix of ['lazy.png', 'svg-character.png', 'background.png']) {
+    assert.equal(h.preloads.some(image => image.src.endsWith(`/${suffix}`)), false, `${suffix} is not a stale required preloader`);
+  }
+  await h.allVisuals('night-civet.png');
+  await h.frame();
+  await h.frame();
+  assert.equal(h.active(), true, 'the last night texture still has to finish');
+  h.loaded('./assets/night-civet.png');
+  h.decoded('./assets/night-civet.png');
+  await h.settle();
+  await h.frame();
+  await h.frame();
+  assert.equal(h.active(), false);
+  assert.equal(h.root.getAttribute('data-theme'), 'night');
+});
+
+await test('a theme fallback or rejected optional promise still loads a complete day world', async () => {
+  for (const rejected of [false, true]) {
+    const h = harness({ themePending: true });
+    await h.domLoaded();
+    assert.equal(h.preloads.length, 0);
+    if (rejected) h.themeReady.reject(new Error('Optional night mode is unavailable'));
+    else h.themeReady.resolve(); // The theme controller deliberately kept day.
+    await h.settle();
+    assert.ok(h.preloads.some(image => image.src.endsWith('/lazy.png')));
+    await h.allVisuals();
+    await h.frame();
+    await h.frame();
+    assert.equal(h.active(), false, 'the successful current-world gate releases normally');
+    assert.equal(h.lazy.getAttribute('src'), './assets/lazy.png');
+  }
+});
+
+await test('leaving during saved-theme restoration cannot restart discovery or restore an overlay', async () => {
+  const h = harness({ themePending: true });
+  await h.domLoaded();
+  h.window.emit('pagehide');
+  await h.settle();
+  assert.equal(h.active(), false);
+  h.themeReady.resolve();
+  await h.settle();
+  await h.frame();
+  assert.equal(h.preloads.length, 0, 'the invalidated loading attempt never discovers artwork');
+  assert.equal(h.overlay.hidden, true);
+  assert.equal(h.header.inert, false);
 });
 
 await test('a loaded image must also decode before any page is revealed', async () => {
